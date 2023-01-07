@@ -1,0 +1,46 @@
+@font-face {
+    font-family: "PressStart";
+    src: local("PressStart"), url(./fonts/PrStart.ttf) format("truetype");
+  }
+
+  @font-face {
+    font-family: "DenkOne-Regular";
+    src: local("DenkOne-Regular, Denk One"),
+      url("./fonts/DenkOne-Regular.ttf") format("truetype");
+  }
+  
+  @font-face {
+    font-family: "PasseroOne-Regular";
+    src: local("PasseroOne-Regular, Passero One"),
+      url("./fonts/PasseroOne-Regular.ttf") format("truetype");
+  }
+  
+  @font-face {
+    font-family: "Audiowide-Regular";
+    src: local("Audiowide-Regular, Audiowide"),
+      url("./fonts/Audiowide-Regular.ttf") format("truetype");
+  }
+  
+  @font-face {
+    font-family: "JotiOne-Regular";
+    src: local("JotiOne-Regular, Joti One"),
+      url("./fonts/JotiOne-Regular.ttf") format("truetype");
+  }
+  
+  @font-face {
+    font-family: "Acme-Regular";
+    src: local("Acme-Regular, Acme"),
+      url("./fonts/Acme-Regular.ttf") format("truetype");
+  }
+  
+  @font-face {
+    font-family: "Slackey-Regular";
+    src: local("Slackey-Regular, Slackey"),
+      url("./fonts/Slackey-Regular.ttf") format("truetype");
+  }
+  
+  @font-face {
+    font-family: "Iceland-Regular";
+    src: local("Iceland-Regular, Iceland"),
+      url("./fonts/Iceland-Regular.ttf") format("truetype");
+  }

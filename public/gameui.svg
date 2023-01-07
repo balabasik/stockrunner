@@ -1,0 +1,75 @@
+<svg id="gameui-all" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2160" height="1080" viewBox="0 0 2160 1080">
+  <defs>
+    <clipPath id="clip-path">
+      <rect width="2160" height="1080" style="fill: none"/>
+    </clipPath>
+  </defs>
+  <title>gameui6</title>
+  <g id="gameui-clip-group">
+    <g style="clip-path: url(#clip-path)">
+      <g>
+        <g id="gameui-top">
+          <rect id="gameui-top-shelf" x="-37.1" y="-22" width="2235.05" height="101" style="fill: #b7b7b7;stroke: #000;stroke-linecap: round;stroke-linejoin: round;stroke-width: 5px"/>
+          <g id="gameui-rank">
+            <rect x="83.89" y="-22" width="142" height="133" rx="10" style="fill: #95ff7f"/>
+            <rect x="83.89" y="-22" width="142" height="133" rx="10" style="fill: none;stroke: #000;stroke-linecap: round;stroke-linejoin: round;stroke-width: 5px"/>
+          </g>
+          <g id="gameui-code">
+            <rect x="1762.08" y="-22" width="442" height="123" rx="10" style="fill: #ffdf94"/>
+            <rect x="1762.08" y="-22" width="442" height="123" rx="10" style="fill: none;stroke: #000;stroke-linecap: round;stroke-linejoin: round;stroke-width: 5px"/>
+          </g>
+          <g id="gameui-timer">
+            <rect x="1020.5" y="-22" width="120" height="156" rx="10" style="fill: #e6e6e6"/>
+            <rect x="1020.5" y="-22" width="120" height="156" rx="10" style="fill: none;stroke: #000;stroke-linecap: round;stroke-linejoin: round;stroke-width: 5px"/>
+          </g>
+          <rect id="gameui-rank-textbox" x="83.89" y="9" width="142" height="98" style="fill: none"/>
+          <rect id="gameui-timer-textbox" x="1021" y="9.5" width="119" height="125" style="fill: none"/>
+          <rect id="gameui-code-textbox" x="1762.08" y="-3.85" width="395.6" height="104.35" style="fill: none"/>
+          <rect id="gameui-exp-box" x="242.36" y="17.82" width="757.22" height="44.68" style="fill: none"/>
+          <rect id="gameui-progress-box" x="1171" y="24" width="566.88" height="38" style="fill: none"/>
+        </g>
+        <g id="gameui-bottom">
+          <rect id="gameui-bottom-shelf" x="114.83" y="998.64" width="1927.52" height="101" style="fill: #b7b7b7;stroke: #000;stroke-linecap: round;stroke-linejoin: round;stroke-width: 5px"/>
+          <!-- 
+          <path id="gameui-gear-left" d="M0,882.26a197.58,197.58,0,0,0-39.55,4v30.59a165.86,165.86,0,0,0-47.9,19.77L-109.07,915a198,198,0,0,0-30.59,25.34A198.46,198.46,0,0,0-165,970.93l21.63,21.64a166.36,166.36,0,0,0-19.77,47.89h-30.59a196.56,196.56,0,0,0,0,79.1h30.59a166.53,166.53,0,0,0,19.77,47.9L-165,1189.09a199,199,0,0,0,25.34,30.59A198.91,198.91,0,0,0-109.07,1245l21.63-21.63a166.53,166.53,0,0,0,47.9,19.77v30.58a197.58,197.58,0,0,0,39.55,4,197.58,197.58,0,0,0,39.55-4v-30.58a166.53,166.53,0,0,0,47.9-19.77L109.09,1245a199,199,0,0,0,30.59-25.34A198.76,198.76,0,0,0,165,1189.09l-21.63-21.63a166.53,166.53,0,0,0,19.77-47.9h30.59a197.58,197.58,0,0,0,4-39.55,199.06,199.06,0,0,0-4-39.55H163.16a166.53,166.53,0,0,0-19.77-47.9L165,970.93a200.1,200.1,0,0,0-25.34-30.59A198.88,198.88,0,0,0,109.09,915L87.46,936.64a166.16,166.16,0,0,0-47.9-19.78V886.28A197.63,197.63,0,0,0,0,882.26ZM0,998.68A81.34,81.34,0,0,1,81.32,1080,81.36,81.36,0,0,1,0,1161.32,81.36,81.36,0,0,1-81.32,1080,81.34,81.34,0,0,1,0,998.68Z" style="fill: #a0a0a0;stroke: #000;stroke-linecap: round;stroke-linejoin: round;stroke-width: 5px"/>
+          <path id="gameui-gear-right" d="M2160,882.24a199.06,199.06,0,0,0-39.55,4v30.59a166.53,166.53,0,0,0-47.9,19.77L2050.91,915A212.7,212.7,0,0,0,1995,970.92l21.63,21.63a166.14,166.14,0,0,0-19.77,47.9h-30.59a196.56,196.56,0,0,0,0,79.1h30.59a166.14,166.14,0,0,0,19.77,47.9L1995,1189.08a212.52,212.52,0,0,0,55.93,55.93l21.63-21.63a166.53,166.53,0,0,0,47.9,19.77v30.59a196.56,196.56,0,0,0,79.1,0v-30.59a166.53,166.53,0,0,0,47.9-19.77l21.63,21.63a212.52,212.52,0,0,0,55.93-55.93l-21.63-21.63a166.53,166.53,0,0,0,19.77-47.9h30.59a196.56,196.56,0,0,0,0-79.1h-30.59a166.53,166.53,0,0,0-19.77-47.9L2325,970.92A212.78,212.78,0,0,0,2269.07,915l-21.63,21.63a166.53,166.53,0,0,0-47.9-19.77v-30.6A198.16,198.16,0,0,0,2160,882.24Zm0,116.44a81.32,81.32,0,1,1-81.32,81.32h0A81.36,81.36,0,0,1,2160,998.68Z" style="fill: #a0a0a0;stroke: #000;stroke-linecap: round;stroke-linejoin: round;stroke-width: 5px"/>
+          -->
+          <rect id="gameui-spell4" x="1219.3" y="953.3" width="107.7" height="107.7" style="fill: none"/>
+          <rect id="gameui-spell3" x="1090.5" y="953.3" width="107.7" height="107.7" style="fill: none"/>
+          <rect id="gameui-spell2" x="961.88" y="953.3" width="107.7" height="107.7" style="fill: none"/>
+          <rect id="gameui-spell1" x="833.5" y="953.3" width="107.7" height="107.7" style="fill: none"/>
+          <g id="gameui-bottom-left-box1">
+            <rect x="468" y="1012" width="59" height="59" style="fill: none"/>
+          </g>
+          <g id="gameui-bottom-left-textbox">
+            <rect x="373" y="1012" width="79" height="59" style="fill: none"/>
+          </g>
+          <g id="gameui-bottom-left-box2">
+            <rect x="542" y="1012" width="59" height="59" style="fill: none"/>
+          </g>
+          <g id="gameui-bottom-left-box3">
+            <rect x="616" y="1012" width="59" height="59" style="fill: none"/>
+          </g>
+          <g id="gameui-bottom-left-box4">
+            <rect x="690" y="1012" width="59" height="59" style="fill: none"/>
+          </g>
+          <g id="gameui-bottom-right-box1">
+            <rect x="1637" y="1012" width="59" height="59" style="fill: none"/>
+          </g>
+          <g id="gameui-bottom-right-textbox">
+            <rect x="1712" y="1012" width="79" height="59" style="fill: none"/>
+          </g>
+          <g id="gameui-bottom-right-box2">
+            <rect x="1563" y="1012" width="59" height="59" style="fill: none"/>
+          </g>
+          <g id="gameui-bottom-right-box3">
+            <rect x="1489" y="1012" width="59" height="59" style="fill: none"/>
+          </g>
+          <g id="gameui-bottom-right-box4">
+            <rect x="1415" y="1012" width="59" height="59" style="fill: none"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
