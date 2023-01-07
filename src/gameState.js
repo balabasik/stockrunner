@@ -51,6 +51,7 @@ class GameState {
   constructor(physics) {
     this.physics = physics;
     this.timeStamp = 0;
+    this.gameTime = 0;
     this.player = null;
     this.playerKeys = null;
     this.boxes = {};

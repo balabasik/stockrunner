@@ -104,10 +104,8 @@ class Wall extends Component {
           filter: "blur(5px)",
         }}
       >
-        {/*Object.keys(this.state.stars).map((key) => this.renderStar(key))*/}
-        {/*<Zigzag />*/}
         <object
-          data="zigzag.svg" // NOTE: inn illustrator use "export_as", and "use artboards"
+          data="zigzag.svg" // NOTE: in illustrator use "export_as", and "use artboards"
           type="image/svg+xml"
           id="zigzag-svg"
           width="100%"
@@ -116,21 +114,29 @@ class Wall extends Component {
           top="0px"
           onLoad={this.onSvgLoaded.bind(this)}
         />
-        {this.state.shinyPoints.map((point, id) => (
-          <div
-            key={id}
-            style={{
-              position: "absolute",
-              left: point.pos[0] - 10 / 2,
-              top: point.pos[1] - 10 / 2,
-              width: 10,
-              height: 10,
-              borderRadius: 10,
-              boxShadow: "0px 0px 10px 10px #ffffff",
-              backgroundColor: "#ffffff",
-            }}
-          />
-        ))}
+        {this.state.shinyPoints.map((point, id) => {
+          let visible =
+            point.pos[0] >= this.props.frameLeft &&
+            point.pos[0] < this.props.sframeLeft + 2160 &&
+            point.pos[1] >= this.props.frameBottom &&
+            point.pos[1] < this.props.frameBottom + 1080;
+          if (!visible) return;
+          return (
+            <div
+              key={id}
+              style={{
+                position: "absolute",
+                left: point.pos[0] - 10 / 2,
+                top: point.pos[1] - 10 / 2,
+                width: 10,
+                height: 10,
+                borderRadius: 10,
+                boxShadow: "0px 0px 10px 10px #ffffff",
+                backgroundColor: "#ffffff",
+              }}
+            />
+          );
+        })}
       </div>
     );
   }

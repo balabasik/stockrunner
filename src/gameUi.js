@@ -118,16 +118,28 @@ class GameUi extends Component {
   }
 
   getSelectedStockId() {
+    if (!this.props.gameState) return 0;
     let value = Math.floor(
       this.props.gameState.stockFilter.length / 2 +
         this.props.gameState.shiftStockId
     );
+    while (value < 0) {
+      value += this.props.gameState.stockFilter.length;
+    }
     this.translateTransitionEnabled =
-      value == 0 || value % this.props.gameState.stockFilter.length != 0;
+      value % this.props.gameState.stockFilter.length != 0 &&
+      value % this.props.gameState.stockFilter.length !=
+        this.props.gameState.stockFilter.length - 1;
     return value % this.props.gameState.stockFilter.length;
   }
 
   renderStock() {
+    let transform =
+      !this.props.gameState || this.props.gameState.stockFilter.length < 10
+        ? 0
+        : "translateX(" +
+          -Math.floor(this.getSelectedStockId() - 4) * 130 +
+          "px)";
     return (
       <div
         style={{
@@ -167,68 +179,75 @@ class GameUi extends Component {
                   this.props.gameState.stockFilter.length * (120 + 10) + 10,
                 position: "relative",
                 //overflow: "hidden",
-                transform:
-                  this.props.gameState.stockFilter.length < 10
-                    ? 0
-                    : "translateX(" +
-                      -Math.floor(this.getSelectedStockId() - 4) * 130 +
-                      "px)",
+                //transform: transform, # NOTE: transform here is not getting updated since element is static.
                 //display: "flex",
                 //justifyContent: "center",
                 //alignItems: "center",
                 //backgroundColor: "#fa4646",
-                transition: this.translateTransitionEnabled
-                  ? "transform ease-in-out 0.3s"
-                  : "",
+                /*transition: this.translateTransitionEnabled
+                  ? "transform ease-in-out 0.1s"
+                  : "",*/
               }}
             >
-              {this.props.gameState.stockFilter.map((stock, id) =>
-                [-1, 0, 1].map((i) =>
-                  this.props.gameState.stockFilter.length >= 9 || i == 0 ? (
-                    <div
-                      key={id + "" + i}
-                      style={{
-                        position: "absolute",
-                        width: 120,
-                        top: "10%",
-                        height: "80%",
-                        left:
-                          10 +
-                          (120 + 10) * id +
-                          i * this.props.gameState.stockFilter.length * 130,
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        textAlign: "center",
-                        fontSize: this.getSelectedStockId() == id ? 30 : 25,
-                        fontFamily: "Slackey-Regular",
-                        color: "#3e3e3e",
-                        outline:
-                          this.getSelectedStockId() == id
-                            ? "solid #464646 3px"
-                            : "",
-                        backgroundColor:
-                          stock == this.props.gameState.symbol
-                            ? "#ffffa1"
-                            : this.getSelectedStockId() == id
-                            ? "#d8d8d8"
-                            : "#b6b6b6",
-                        paddingLeft: 20,
-                        paddingRight: 20,
-                        marginLeft: 10,
-                        borderRadius: 5,
-                        transform:
-                          this.getSelectedStockId() == id ? "scale(1.05)" : "",
-                        transition: "transform ease-in-out 0.3s",
-                      }}
-                    >
-                      {stock.toUpperCase()}
-                    </div>
-                  ) : (
-                    <div key={id + "" + i} />
-                  )
-                )
-              )}
+              {this.props.gameState.stockFilter.map((stock, id) => (
+                <div
+                  key={id}
+                  style={{
+                    height: "100%",
+                    width: "100%",
+                    position: "absolute",
+                    transform: transform,
+                  }}
+                >
+                  {[-1, 0, 1].map((i) =>
+                    this.props.gameState.stockFilter.length >= 9 || i == 0 ? (
+                      <div
+                        key={id + "" + i}
+                        style={{
+                          position: "absolute",
+                          width: 120,
+                          top: "10%",
+                          height: "80%",
+                          left:
+                            10 +
+                            (120 + 10) * id +
+                            i * this.props.gameState.stockFilter.length * 130,
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          textAlign: "center",
+                          fontSize: this.getSelectedStockId() == id ? 30 : 25,
+                          fontFamily: "Slackey-Regular",
+                          color: "#3e3e3e",
+                          outline:
+                            this.getSelectedStockId() == id
+                              ? "solid #464646 3px"
+                              : "",
+                          backgroundColor:
+                            stock == this.props.gameState.symbol
+                              ? "#ffffa1"
+                              : this.getSelectedStockId() == id
+                              ? "#e5d7ff"
+                              : "#b6b6b6",
+                          paddingLeft: 20,
+                          paddingRight: 20,
+                          marginLeft: 10,
+                          borderRadius: 5,
+                          transform:
+                            this.getSelectedStockId() == id
+                              ? "scale(1.05)"
+                              : "",
+                          transition: "transform ease-in-out 0.3s",
+                        }}
+                      >
+                        {stock.toUpperCase()}
+                      </div>
+                    ) : (
+                      <div key={id + "" + i} />
+                    )
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -659,6 +678,11 @@ class GameUi extends Component {
     let progress = this.props.gameState
       ? this.props.gameState.player.stats.stockChanges
       : 0;
+    let seconds = this.props.gameState ? this.props.gameState.gameTime : 0;
+    let mm = Math.floor(seconds / 60 / 1000) % 100;
+    if (mm < 10) mm = "0" + mm;
+    let ss = Math.floor(seconds / 1000) % 60;
+    if (ss < 10) ss = "0" + ss;
     return (
       <div
         style={{
@@ -672,9 +696,31 @@ class GameUi extends Component {
         <div
           style={{
             position: "absolute",
+            top: "-25%",
+            left: "70%",
+            width: "30%",
+            height: "150%",
+            backgroundColor: "#cfcfcf",
+            //border: "5px solid black",
+            borderRadius: "10px",
+            marginTop: "-4px",
+            overflow: "hidden",
+            color: "#5a5a5a",
+            fontSize: 30,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontFamily: "DenkOne-Regular",
+          }}
+        >
+          {mm + " : " + ss}
+        </div>
+        <div
+          style={{
+            position: "absolute",
             top: "15%",
             left: 0,
-            width: "100%",
+            width: "65%",
             height: "70%",
             backgroundColor: "white",
             border: "5px solid black",

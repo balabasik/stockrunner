@@ -48,6 +48,19 @@ function LoadMap1(state) {
   state.playerBirthPlaces = [[brickW / 2 - 160 / 2, state.worldHeight * 0.8]];
 
   state.stocks = LoadStocks();
+  state.stocks["amz1"] = "";
+  state.stocks["amz2"] = "";
+  state.stocks["amz3"] = "";
+  state.stocks["amz4"] = "";
+  state.stocks["amz5"] = "";
+  state.stocks["amz6"] = "";
+  state.stocks["amz7"] = "";
+  state.stocks["amz8"] = "";
+  state.stocks["amz9"] = "";
+  state.stocks["am10"] = "";
+  state.stocks["am11"] = "";
+  state.stocks["am12"] = "";
+  state.stocks["am13"] = "";
 
   state.stockMap = {};
   for (let key in state.stocks) {

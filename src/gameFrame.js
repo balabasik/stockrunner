@@ -158,7 +158,9 @@ class GameWorld extends Component {
 
   renderBox(key) {
     let box = this.props.gameState.boxes[key];
-    if (this.noOverlapBox(box)) return <div key={key} />;
+    if (this.noOverlapBox(box)) {
+      return;
+    }
     let mirror =
       !box.isMovingForward(this.props.gameState.timeStamp) &&
       box.stats.extra != undefined &&
@@ -369,18 +371,6 @@ class GameFrame extends Component {
     let left = ratio * (1 - scale);
     return (
       <div>
-        {
-          <img
-            src={"wtc.jpg"}
-            style={{
-              position: "absolute",
-              left: 0,
-              bottom: 0,
-              width: "100%",
-              height: "100%",
-            }}
-          />
-        }
         <div
           style={{
             position: "absolute",
@@ -391,7 +381,10 @@ class GameFrame extends Component {
             //backgroundColor: "#666666",
           }}
         >
-          <Wall />
+          <Wall
+            frameBottom={100}
+            frameLeft={8640 * ratio * (2160 / 8640 - 1)}
+          />
         </div>
         <GameWorld
           gameState={this.props.gameState}

@@ -26,7 +26,7 @@ const pageStyle = {
   height: "100%",
   backgroundColor: "#e1f6bb",
   cursor: "url(./cursor.png),auto",
-  overflow: "scroll",
+  overflow: "hidden",
 };
 
 const globalHolderStyle = {
@@ -79,6 +79,8 @@ function getBottom(winW, winH, zoom) {
   );
 }
 
+const emptyKeys = new Keys();
+
 class GamePlay extends Component {
   constructor(props) {
     super(props);
@@ -121,7 +123,7 @@ class GamePlay extends Component {
     window.addEventListener("resize", (event) => {
       this.updateDimensions();
     });
-    window.addEventListener("scroll", (event) => {
+    this.page.addEventListener("wheel", (event) => {
       this.onScroll(event);
     });
 
@@ -160,6 +162,10 @@ class GamePlay extends Component {
 
   onContextMenu(event) {
     event.preventDefault();
+    if (!this.state.physics) return;
+    this.state.physics.state.shiftStockId++;
+    // NOTE: It is important to call into the keys since browser also registers
+    // right click as "onMouseDown".
     this.state.keys.onRightClickDown();
     // NOTE: We release right click immediately once the value is queried by the physics,
     // so there is no reason to do it here.
@@ -168,7 +174,13 @@ class GamePlay extends Component {
 
   onScroll(event) {
     //event.preventDefault();
-    console.log(event.srcElement.body.scrollTop);
+    //console.log(event);
+    if (!this.state.physics) return;
+    if (event.deltaY > 0) {
+      this.state.physics.state.shiftStockId++;
+    } else {
+      this.state.physics.state.shiftStockId--;
+    }
     //this.state.keys.onRightClickDown();
   }
 
@@ -230,7 +242,7 @@ class GamePlay extends Component {
 
   // NOTE: When esc is active we do not pass keys to the physics engine
   getKeys() {
-    return this.state.escKeyPressed ? new Keys() : this.state.keys;
+    return this.state.keys;
   }
 
   moveCamera(state) {

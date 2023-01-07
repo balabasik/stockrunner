@@ -34,6 +34,7 @@ class Physics {
   reinitTime() {
     this.initTime = GetTime();
     this.realInitTime = this.initTime;
+    this.state.gameTime = 0;
   }
 
   loadMap() {
@@ -54,12 +55,14 @@ class Physics {
     this.onNewState(this.state);
     let newUpdateTime = GetTime();
     if (this.lastUpdateTime == 0) this.lastUpdateTime = newUpdateTime;
-    let baseDelay = 25; // 40
-    let delay = Math.min(
+    let baseDelay = 25;
+    let delay = Math.max(0, baseDelay - (newUpdateTime - this.lastUpdateTime));
+    /*let delay = Math.min(
       baseDelay,
       Math.max(0, 2 * baseDelay - (newUpdateTime - this.lastUpdateTime))
-    );
-    //console.log(newUpdateTime - this.lastUpdateTime);
+    );*/
+    //console.log(delay);
+    console.log(newUpdateTime - this.lastUpdateTime);
     this.lastUpdateTime = newUpdateTime;
     setTimeout(this.updateState.bind(this), delay);
   }
@@ -86,6 +89,7 @@ class Physics {
   }
 
   restartGame() {
+    this.state.player.stats.isDead = true;
     this.reinitTime();
     this.state.resetFirePosX();
     this.revivePlayer(this.state.player, this.newTimeStamp);
@@ -100,16 +104,22 @@ class Physics {
     this.myGameTime = now - this.realInitTime;
     let elapsedTime = newTimeStamp - this.state.timeStamp;
 
+    //console.log(this.state.physicsStats.gameStatus.paused);
+
     if (
       !this.state.physicsStats.gameStatus.paused &&
       !this.state.physicsStats.gameStatus.winner
     ) {
       let player = this.state.player;
       let key = this.state.playerKeys;
+      //console.log(elapsedTime);
+      let before = GetTime();
       if (!player.stats.isDead) {
         this.movePlayer(elapsedTime, player, key);
         this.applyPressure(elapsedTime, player);
         this.moveBoxes(player, newTimeStamp);
+        // NOTE: This second applyPressure is to release the box that was pressed under the player in case if he was stopped by another box.
+        this.applyPressure(elapsedTime, player);
         this.updateStocks(key);
         this.tryFire(this.state.player, newTimeStamp, this.state.playerKeys);
         if (player.getBottomY() < 5) {
@@ -118,8 +128,15 @@ class Physics {
         if (player.getRightX() >= this.state.worldWidth - 20) {
           this.state.physicsStats.gameStatus.winner = true;
         }
+        if (elapsedTime > 0) this.state.gameTime += elapsedTime;
+        this.moveFire(player, elapsedTime);
       }
-      this.moveFire(player, elapsedTime);
+      /*console.log(
+        "Compute state took:",
+        GetTime() - before,
+        "Elapsed time:",
+        elapsedTime
+      );*/
     }
     this.state.timeStamp = newTimeStamp;
   }
@@ -147,11 +164,11 @@ class Physics {
       }
     }
 
-    if (key.rightClickEvents > this.rightClickEvents) {
+    /*if (key.rightClickEvents > this.rightClickEvents) {
       this.state.shiftStockId = this.state.shiftStockId + 1;
       //console.log("right click!", this.state.shiftStockId);
       this.rightClickEvents = key.rightClickEvents;
-    }
+    }*/
 
     if (
       oldLength != this.state.stockFilter.length ||
@@ -294,20 +311,12 @@ class Physics {
   tryFire(player, newTimeStamp, keys) {
     if (!keys.leftClick) return;
 
-    /*
-    if (this.state.physicsStats.gameStatus.paused) {
-      this.state.physicsStats.gameStatus.paused = false;
-    }
-
-    if (player.stats.isDead) {
-      this.revivePlayer(player, newTimeStamp);
-      return;
-    }
-    */
-
     let realId =
       Math.floor(this.state.stockFilter.length / 2 + this.state.shiftStockId) %
       this.state.stockFilter.length;
+    while (realId < 0) {
+      realId += this.state.stockFilter.length;
+    }
     if (!this.state.stockFilter[realId]) return;
 
     if (this.state.lastBoxUpdate && GetTime() - this.state.lastBoxUpdate < 150)
