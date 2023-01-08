@@ -117,7 +117,7 @@ class Wall extends Component {
         {this.state.shinyPoints.map((point, id) => {
           let visible =
             point.pos[0] >= this.props.frameLeft &&
-            point.pos[0] < this.props.sframeLeft + 2160 &&
+            point.pos[0] < this.props.frameLeft + 2160 &&
             point.pos[1] >= this.props.frameBottom &&
             point.pos[1] < this.props.frameBottom + 1080;
           if (!visible) return;

@@ -62,7 +62,7 @@ class Physics {
       Math.max(0, 2 * baseDelay - (newUpdateTime - this.lastUpdateTime))
     );*/
     //console.log(delay);
-    console.log(newUpdateTime - this.lastUpdateTime);
+    //sconsole.log(newUpdateTime - this.lastUpdateTime);
     this.lastUpdateTime = newUpdateTime;
     setTimeout(this.updateState.bind(this), delay);
   }
