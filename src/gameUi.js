@@ -323,7 +323,7 @@ class GameUi extends Component {
           textIndent: "-5px",
         }}
       >
-        {this.props.gameState
+        {this.props.gameState && this.props.gameState.ready
           ? this.props.gameState.symbol.substring(0, 4).toUpperCase()
           : "N/A"}
       </div>

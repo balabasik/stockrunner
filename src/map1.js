@@ -37,6 +37,7 @@ function LoadMap1(state) {
   state.worldWidth = (365 + 1) * brickW;
   state.worldHeight = 1300;
   state.floorY = 0; // should always be 0;
+  state.ready = false;
 
   state.mapStyle = {
     back: "#dff2f5", //worldBackStyle,
@@ -47,21 +48,14 @@ function LoadMap1(state) {
   // 160 is player width
   state.playerBirthPlaces = [[brickW / 2 - 160 / 2, state.worldHeight * 0.8]];
 
-  state.stocks = LoadStocks();
-  /*state.stocks["amz1"] = "";
-  state.stocks["amz2"] = "";
-  state.stocks["amz3"] = "";
-  state.stocks["amz4"] = "";
-  state.stocks["amz5"] = "";
-  state.stocks["amz6"] = "";
-  state.stocks["amz7"] = "";
-  state.stocks["amz8"] = "";
-  state.stocks["amz9"] = "";
-  state.stocks["am10"] = "";
-  state.stocks["am11"] = "";
-  state.stocks["am12"] = "";
-  state.stocks["am13"] = "";*/
+  LoadStocks((stocks) => {
+    OnStocksReady(state, stocks);
+  });
+}
 
+function OnStocksReady(state, stocks) {
+  state.ready = true;
+  state.stocks = stocks;
   state.stockMap = {};
   for (let key in state.stocks) {
     if (key.length > 1) {
@@ -85,13 +79,14 @@ function LoadMap1(state) {
 
   state.symbol = "apa";
   let stock = state.stocks[state.symbol];
+  //console.log(state.stocks);
   for (let i = 0; i < 365; i++) {
     if (i in pillars) {
       createPillar(state, i * brickW, pillars[i].y, pillars[i].mirror);
       continue;
     }
     let id = 0;
-    if (stock[i] == undefined) {
+    if (stock[i] < 0) {
       id = state.createStaticBox(
         i * brickW + 5,
         -state.worldHeight / 2,

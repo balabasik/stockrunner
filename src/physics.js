@@ -142,7 +142,7 @@ class Physics {
   }
 
   updateStocks(key) {
-    if (!this.state) return;
+    if (!this.state || !this.state.ready) return;
 
     let oldLength = this.state.stockFilter.length;
     let oldFirst = oldLength > 0 ? this.state.stockFilter[0] : "";
@@ -271,11 +271,13 @@ class Physics {
   }
 
   setStocks() {
+    if (!this.state || !this.state.ready) return;
     let bottom = -0.7;
+    //console.log(this.state.stocks[this.state.symbol]);
     for (let date in this.state.dateToIds) {
       let box = this.state.boxes[this.state.dateToIds[date]];
       if (box.getLeftX() < this.state.player.getRightX()) continue;
-      if (this.state.stocks[this.state.symbol][date] != undefined) {
+      if (this.state.stocks[this.state.symbol][date] > -0.5) {
         /*box.stats.style = {
           backgroundColor: "#b7e0ff",
           outline: "5px solid #4e4e4e",

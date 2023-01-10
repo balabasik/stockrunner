@@ -32,12 +32,30 @@ function parse_stock(stock) {
   return res;
 }
 
-function LoadStocks() {
-  let stocks = {};
-  for (let key in data) {
-    stocks[key] = parse_stock(data[key]);
-  }
-  return stocks;
+const stock_names = require("./names.json");
+
+function LoadStocks(cb) {
+  let url = document.location.href + "nums.bin";
+  fetch(url).then((response) => {
+    response.blob().then((blob) => {
+      const reader = new FileReader();
+      reader.onloadend = (event) => {
+        let ab = new Int8Array(event.target.result);
+        let stocks = {};
+        let idx = 0;
+        for (let name of stock_names) {
+          let ret = [];
+          ab.slice(idx, idx + 365).map((x) => {
+            ret.push(x < 0 ? -1 : 0.15 + (x / 100) * 0.65);
+          });
+          stocks[name] = ret;
+          idx += 365;
+        }
+        cb(stocks);
+      };
+      reader.readAsArrayBuffer(blob);
+    });
+  });
 }
 
 export { LoadStocks };
