@@ -344,6 +344,14 @@ class GameUi extends Component {
         ? this.props.gameState.firePosX / this.props.gameState.worldWidth
         : 0
     );
+    let day = this.props.gameState
+      ? Math.floor(
+          (365 * this.props.gameState.player.getLeftX()) /
+            this.props.gameState.worldWidth
+        )
+      : 0;
+    let week = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"];
+    day = week[day % 7];
     return (
       <div
         style={{
@@ -357,9 +365,31 @@ class GameUi extends Component {
         <div
           style={{
             position: "absolute",
+            top: "-10%",
+            left: "80%",
+            width: "19%",
+            height: "125%",
+            backgroundColor: "#cfcfcf",
+            //border: "5px solid black",
+            borderRadius: "10px",
+            marginTop: "-4px",
+            overflow: "hidden",
+            color: "#5a5a5a",
+            fontSize: 30,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontFamily: "DenkOne-Regular",
+          }}
+        >
+          {day}
+        </div>
+        <div
+          style={{
+            position: "absolute",
             top: 0,
             left: "5%",
-            width: "90%",
+            width: "71%",
             height: "100%",
           }}
         >
@@ -697,8 +727,8 @@ class GameUi extends Component {
           style={{
             position: "absolute",
             top: "-25%",
-            left: "70%",
-            width: "30%",
+            left: "0%",
+            width: "25%",
             height: "150%",
             backgroundColor: "#cfcfcf",
             //border: "5px solid black",
@@ -719,14 +749,14 @@ class GameUi extends Component {
           style={{
             position: "absolute",
             top: "15%",
-            left: 0,
-            width: "65%",
+            left: "30%",
+            width: "70%",
             height: "70%",
             backgroundColor: "white",
             border: "5px solid black",
             borderRadius: "10px",
             marginTop: "-4px",
-            overflow: "hidden",
+            //overflow: "hidden",
           }}
         >
           <div
@@ -737,31 +767,32 @@ class GameUi extends Component {
               width: progress + "%",
               height: "100%",
               backgroundColor: "grey",
+              borderRadius: "5px",
             }}
           />
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: Math.min(progress, 97) + "%",
-            width: GetPx(this.state.progress.h * 1.5),
-            height: GetPx(this.state.progress.h),
-            borderRadius: "10px",
-            border: "4px solid black",
-            marginTop: "-3px",
-            marginLeft: GetPx(-this.state.progress.h / 2),
-            backgroundColor: "rgb(255, 241, 112)",
-            textAlign: "center",
-            display: "flex",
-            justifyContent: "center",
-            alignContent: "center",
-            flexDirection: "column",
-            fontSize: GetPx(this.state.progress.h * 0.7),
-            fontFamily: "DenkOne-Regular",
-          }}
-        >
-          {progress}
+          <div
+            style={{
+              position: "absolute",
+              top: "-43%",
+              left: Math.min(progress, 97) + "%",
+              width: GetPx(this.state.progress.h * 1.5),
+              height: GetPx(this.state.progress.h),
+              borderRadius: "10px",
+              border: "4px solid black",
+              marginTop: "-3px",
+              marginLeft: GetPx(-this.state.progress.h / 2),
+              backgroundColor: "rgb(255, 241, 112)",
+              textAlign: "center",
+              display: "flex",
+              justifyContent: "center",
+              alignContent: "center",
+              flexDirection: "column",
+              fontSize: GetPx(this.state.progress.h * 0.7),
+              fontFamily: "DenkOne-Regular",
+            }}
+          >
+            {progress}
+          </div>
         </div>
       </div>
     );

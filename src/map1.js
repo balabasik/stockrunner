@@ -56,6 +56,26 @@ function LoadMap1(state) {
 function OnStocksReady(state, stocks) {
   state.ready = true;
   state.stocks = stocks;
+  /*
+  state.stocks["am1"] = state.stocks["goog"];
+  state.stocks["am2"] = state.stocks["goog"];
+  state.stocks["am3"] = state.stocks["goog"];
+  state.stocks["am4"] = state.stocks["goog"];
+  state.stocks["am5"] = state.stocks["goog"];
+  state.stocks["am6"] = state.stocks["goog"];
+
+  state.stocks["cr1"] = state.stocks["goog"];
+  state.stocks["cr2"] = state.stocks["goog"];
+  state.stocks["cr3"] = state.stocks["goog"];
+  state.stocks["cr4"] = state.stocks["goog"];
+  state.stocks["cr5"] = state.stocks["goog"];
+  state.stocks["cr6"] = state.stocks["goog"];
+  state.stocks["cr7"] = state.stocks["goog"];
+  state.stocks["cr8"] = state.stocks["goog"];
+  state.stocks["cr9"] = state.stocks["goog"];
+  state.stocks["cr10"] = state.stocks["goog"];
+  state.stocks["cr11"] = state.stocks["goog"];
+*/
   state.stockMap = {};
   for (let key in state.stocks) {
     if (key.length > 1) {

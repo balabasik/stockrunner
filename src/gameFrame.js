@@ -362,30 +362,9 @@ class GameFrame extends Component {
   }
 
   render() {
-    let scale = 1.1;
-    let ratio = Math.max(
-      0,
-      (this.props.gameState.player.getLeftX() - 1000) /
-        this.props.gameState.worldWidth
-    );
-    let left = ratio * (1 - scale);
     return (
       <div>
-        <div
-          style={{
-            position: "absolute",
-            left: "" + ratio * (2160 / 8640 - 1) * 100 + "%",
-            bottom: 100,
-            width: 8640,
-            height: 1300,
-            //backgroundColor: "#666666",
-          }}
-        >
-          <Wall
-            frameBottom={100}
-            frameLeft={8640 * ratio * (2160 / 8640 - 1)}
-          />
-        </div>
+        <Wall gameState={this.props.gameState} />
         <GameWorld
           gameState={this.props.gameState}
           worldLeftX={this.props.worldLeftX}

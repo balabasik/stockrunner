@@ -129,6 +129,7 @@ class Physics {
           this.state.physicsStats.gameStatus.winner = true;
         }
         if (elapsedTime > 0) this.state.gameTime += elapsedTime;
+        // FIXME: uncomment this iss jsut for testing!
         this.moveFire(player, elapsedTime);
       }
       /*console.log(
