@@ -61,6 +61,7 @@ class GameState {
     this.rightGear = {};
     this.stockFilter = [];
     this.shiftStockId = 0;
+    this.clicks = 0;
 
     this.resetPhysicsStats();
     this.resetFirePosX();

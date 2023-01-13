@@ -191,7 +191,7 @@ class GameUi extends Component {
             >
               {this.props.gameState.stockFilter.map((stock, id) => (
                 <div
-                  key={id}
+                  key={stock + "_" + id}
                   style={{
                     height: "100%",
                     width: "100%",
@@ -346,7 +346,7 @@ class GameUi extends Component {
     );
     let day = this.props.gameState
       ? Math.floor(
-          (365 * this.props.gameState.player.getLeftX()) /
+          (365 * this.props.gameState.player.getRightX()) /
             this.props.gameState.worldWidth
         )
       : 0;
@@ -479,19 +479,20 @@ class GameUi extends Component {
     "Oct",
     "Nov",
     "Dec",
+    "Jan",
   ];
 
   getDate() {
     if (!this.props.gameState) {
       return ["Jan", 1];
     }
-    let months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    let months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 31];
     let accum = [0];
     for (let x of months) {
       accum.push(x + accum[accum.length - 1]);
     }
     let day = Math.floor(
-      (365 * this.props.gameState.player.getLeftX()) /
+      (365 * this.props.gameState.player.getRightX()) /
         this.props.gameState.worldWidth
     );
     let cur_month = 0;

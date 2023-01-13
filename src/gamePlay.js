@@ -163,10 +163,24 @@ class GamePlay extends Component {
   onContextMenu(event) {
     event.preventDefault();
     if (!this.state.physics) return;
+    if (this.state.gameState.physicsStats.gameStatus.paused) return;
     this.state.physics.state.shiftStockId++;
     // NOTE: It is important to call into the keys since browser also registers
     // right click as "onMouseDown".
-    this.state.keys.onRightClickDown();
+    //this.state.keys.onRightClickDown();
+    // NOTE: We release right click immediately once the value is queried by the physics,
+    // so there is no reason to do it here.
+    //setTimeout(() => this.state.keys.onRightClickUp(), 100);
+  }
+
+  onClick(event) {
+    //event.preventDefault();
+    if (!this.state.physics) return;
+    if (this.state.gameState.physicsStats.gameStatus.paused) return;
+    this.state.physics.state.clicks++;
+    // NOTE: It is important to call into the keys since browser also registers
+    // right click as "onMouseDown".
+    //this.state.keys.onRightClickDown();
     // NOTE: We release right click immediately once the value is queried by the physics,
     // so there is no reason to do it here.
     //setTimeout(() => this.state.keys.onRightClickUp(), 100);
@@ -176,6 +190,7 @@ class GamePlay extends Component {
     //event.preventDefault();
     //console.log(event);
     if (!this.state.physics) return;
+    if (this.state.gameState.physicsStats.gameStatus.paused) return;
     if (event.deltaY > 0) {
       this.state.physics.state.shiftStockId++;
     } else {
@@ -929,7 +944,8 @@ class GamePlay extends Component {
                   active={true}
                   onClick={
                     show_menu
-                      ? () => this.state.physics.restartGame()
+                      ? () =>
+                          setTimeout(() => this.state.physics.restartGame(), 50) // we need this timeout otherwise click event immediately causes a click
                       : () => {}
                   }
                 />
@@ -950,7 +966,10 @@ class GamePlay extends Component {
                   text="RESUME"
                   active={!this.state.isDead}
                   onClick={
-                    show_menu ? () => this.state.physics.pause(false) : () => {}
+                    show_menu
+                      ? () =>
+                          setTimeout(() => this.state.physics.pause(false), 50)
+                      : () => {}
                   }
                 />
               </div>
@@ -1076,8 +1095,10 @@ class GamePlay extends Component {
           this.page = node;
         }}
         style={pageStyle}
-        onMouseDown={(event) => this.onMouseDown(event)}
-        onMouseUp={(event) => this.onMouseUp(event)}
+        // onMouseDown and onMouseUp is only useful for continuous activity like shooting
+        //onMouseDown={(event) => this.onMouseDown(event)}
+        //onMouseUp={(event) => this.onMouseUp(event)}
+        onClick={(event) => this.onClick(event)}
         onContextMenu={(event) => this.onContextMenu(event)}
       >
         <div

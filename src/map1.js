@@ -34,7 +34,7 @@ function getStockBoxStyle() {
 
 function LoadMap1(state) {
   // General map attributes
-  state.worldWidth = (365 + 1) * brickW;
+  state.worldWidth = 365 * brickW;
   state.worldHeight = 1300;
   state.floorY = 0; // should always be 0;
   state.ready = false;
@@ -47,7 +47,7 @@ function LoadMap1(state) {
 
   // 160 is player width
   state.playerBirthPlaces = [[brickW / 2 - 160 / 2, state.worldHeight * 0.8]];
-
+  //state.playerBirthPlaces = [[80000, state.worldHeight * 0.8]];
   LoadStocks((stocks) => {
     OnStocksReady(state, stocks);
   });
@@ -56,6 +56,7 @@ function LoadMap1(state) {
 function OnStocksReady(state, stocks) {
   state.ready = true;
   state.stocks = stocks;
+
   /*
   state.stocks["am1"] = state.stocks["goog"];
   state.stocks["am2"] = state.stocks["goog"];
@@ -76,6 +77,7 @@ function OnStocksReady(state, stocks) {
   state.stocks["cr10"] = state.stocks["goog"];
   state.stocks["cr11"] = state.stocks["goog"];
 */
+
   state.stockMap = {};
   for (let key in state.stocks) {
     if (key.length > 1) {
@@ -90,19 +92,78 @@ function OnStocksReady(state, stocks) {
   }
 
   let pillars = {
-    0: { y: state.worldHeight / 2, mirror: false },
+    0: { y: state.worldHeight * 0.5, mirror: false },
     16: { y: state.worldHeight / 2, mirror: false },
     28: { y: state.worldHeight * 0.7, mirror: false },
-    42: { y: state.worldHeight * 0.4, mirror: true },
-    364: { y: state.worldHeight / 2, mirror: false },
+    42: { y: state.worldHeight * 0.5, mirror: true }, // hard
+    56: { y: state.worldHeight * 0.3, mirror: false },
+    70: { y: state.worldHeight * 0.7, mirror: false }, // semi hard
+    84: { y: state.worldHeight * 0.4, mirror: true },
+    98: { y: state.worldHeight * 0.6, mirror: true },
+    99: { y: state.worldHeight * 0.4, mirror: false }, // hard
+    112: { y: state.worldHeight * 0.4, mirror: false },
+    126: { y: state.worldHeight * 0.7, mirror: false },
+    140: { y: state.worldHeight * 0.5, mirror: true }, // hard
+    154: { y: state.worldHeight * 0.4, mirror: false },
+    168: { y: state.worldHeight * 0.8, mirror: true },
+    168.5: { y: state.worldHeight * 0.4, mirror: false },
+    185: { y: state.worldHeight * 0.4, mirror: true },
+    190: { y: state.worldHeight * 0.8, mirror: false }, // very hard (july 4)
+    210: { y: state.worldHeight * 0.4, mirror: false },
+    224: { y: state.worldHeight * 0.7, mirror: false },
+    238: { y: state.worldHeight * 0.7, mirror: true },
+    239: { y: state.worldHeight * 0.7, mirror: true }, // medium hard
+    240: { y: state.worldHeight * 0.7, mirror: true },
+    241: { y: state.worldHeight * 0.7, mirror: true }, // hard
+    252: { y: state.worldHeight * 0.3, mirror: false },
+    266: { y: state.worldHeight * 0.9, mirror: true },
+    280: { y: state.worldHeight * 0.5, mirror: false },
+    281: { y: state.worldHeight * 0.7, mirror: true }, // hard
+    294: { y: state.worldHeight * 0.3, mirror: false },
+    308: { y: state.worldHeight * 0.8, mirror: true }, // medium hard
+    322: { y: state.worldHeight * 0.4, mirror: false },
+    336: { y: state.worldHeight * 0.7, mirror: false },
+    352: { y: state.worldHeight * 0.9, mirror: true }, // start final
+    352.5: { y: state.worldHeight * 0.085, mirror: false },
+    353: { y: state.worldHeight * 0.9, mirror: true },
+    353.5: { y: state.worldHeight * 0.085, mirror: false },
+    354: { y: state.worldHeight * 0.9, mirror: true },
+    354.5: { y: state.worldHeight * 0.085, mirror: false },
+    355: { y: state.worldHeight * 0.9, mirror: true },
+    355.5: { y: state.worldHeight * 0.085, mirror: false },
+    358: { y: state.worldHeight * 0.9, mirror: true },
+    358.5: { y: state.worldHeight * 0.085, mirror: false },
+    359: { y: state.worldHeight * 0.9, mirror: true },
+    359.5: { y: state.worldHeight * 0.085, mirror: false },
+    360: { y: state.worldHeight * 0.9, mirror: true },
+    360.5: { y: state.worldHeight * 0.085, mirror: false },
+    361: { y: state.worldHeight * 0.9, mirror: true },
+    361.5: { y: state.worldHeight * 0.085, mirror: false },
+
+    362: { y: state.worldHeight * 0.4, mirror: false }, // winnner
+    362.5: { y: state.worldHeight * 0.65, mirror: true },
+    363: { y: state.worldHeight * 0.4, mirror: false },
+    363.5: { y: state.worldHeight * 0.65, mirror: true },
+    364: { y: state.worldHeight * 0.4, mirror: false },
+    364.5: { y: state.worldHeight * 0.65, mirror: true },
   };
 
   state.symbol = "apa";
   let stock = state.stocks[state.symbol];
   //console.log(state.stocks);
   for (let i = 0; i < 365; i++) {
-    if (i in pillars) {
-      createPillar(state, i * brickW, pillars[i].y, pillars[i].mirror);
+    if (i in pillars || i + 0.5 in pillars) {
+      if (i in pillars) {
+        createPillar(state, i * brickW, pillars[i].y, pillars[i].mirror);
+      }
+      if (i + 0.5 in pillars) {
+        createPillar(
+          state,
+          i * brickW,
+          pillars[i + 0.5].y,
+          pillars[i + 0.5].mirror
+        );
+      }
       continue;
     }
     let id = 0;

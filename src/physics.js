@@ -13,6 +13,7 @@ class Physics {
     this.stopped = false;
     this.timeStampIsSet = false;
     this.rightClickEvents = 0;
+    this.clicks = 0;
 
     this.updateCounter = 0;
     this.lastUpdateTime = 0;
@@ -125,11 +126,10 @@ class Physics {
         if (player.getBottomY() < 5) {
           this.die("You dropped on lava. Game over.");
         }
-        if (player.getRightX() >= this.state.worldWidth - 20) {
+        if (player.getRightX() >= this.state.worldWidth) {
           this.state.physicsStats.gameStatus.winner = true;
         }
         if (elapsedTime > 0) this.state.gameTime += elapsedTime;
-        // FIXME: uncomment this iss jsut for testing!
         this.moveFire(player, elapsedTime);
       }
       /*console.log(
@@ -252,12 +252,14 @@ class Physics {
 
   moveFire(player, elapsedTime) {
     // If player is 10% away from fire then fire moves 2x faster.
-    let mult = Math.max(
-      1,
-      ((this.state.player.getLeftX() - this.state.firePosX) /
-        this.state.worldWidth) *
-        50
-    );
+    let mult =
+      0.8 *
+      Math.max(
+        1,
+        ((this.state.player.getLeftX() - this.state.firePosX) /
+          this.state.worldWidth) *
+          50
+      );
     this.state.firePosX +=
       mult * elapsedTime * (this.state.worldWidth / 300000);
     if (this.state.firePosX > this.state.player.getLeftX() + 50) {
@@ -312,7 +314,11 @@ class Physics {
   }
 
   tryFire(player, newTimeStamp, keys) {
-    if (!keys.leftClick) return;
+    //if (!keys.leftClick) return;
+    if (this.state.clicks <= this.clicks) {
+      return;
+    }
+    this.clicks = this.state.clicks;
 
     let realId =
       Math.floor(this.state.stockFilter.length / 2 + this.state.shiftStockId) %
