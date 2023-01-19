@@ -622,6 +622,23 @@ class GamePlay extends Component {
                     <div
                       style={{
                         position: "absolute",
+                        top: 10,
+                        left: 0,
+                        height: 50,
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        fontSize: 45,
+                        fontFamily: "JotiOne-Regular",
+                        color: "#8c8d9d",
+                      }}
+                    >
+                      {key.toUpperCase()}
+                    </div>
+                    <div
+                      style={{
+                        position: "absolute",
                         width: 160,
                         height: 240,
                         top: 0,

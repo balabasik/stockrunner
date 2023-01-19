@@ -2,6 +2,7 @@ import GameState, { leftGearLetters, rightGearLetters } from "./gameState";
 import { GetTime, GetRand } from "./utils";
 import Player from "./player";
 import Keys from "./keys";
+import PerkManager from "./perks";
 
 class Physics {
   constructor(initState, requestKeys, onNewState, onReady) {
@@ -14,6 +15,7 @@ class Physics {
     this.timeStampIsSet = false;
     this.rightClickEvents = 0;
     this.clicks = 0;
+    this.perkManager = new PerkManager(this.onNewPerks.bind(this), this);
 
     this.updateCounter = 0;
     this.lastUpdateTime = 0;
@@ -34,8 +36,14 @@ class Physics {
 
   reinitTime() {
     this.initTime = GetTime();
+    this.state.timeStamp = this.initTime;
     this.realInitTime = this.initTime;
     this.state.gameTime = 0;
+    this.state.stockCooldown = 0;
+  }
+
+  onNewPerks(perks) {
+    this.state.perks = perks;
   }
 
   loadMap() {
@@ -77,11 +85,12 @@ class Physics {
 
   pause(paused) {
     this.state.physicsStats.gameStatus.paused = paused;
+    this.state.timeStamp = GetTime();
   }
 
   resetStocks() {
     this.state.symbol = "apa";
-    this.setStocks();
+    //this.setStocks();
     /*for (let key in this.state.boxes) {
       let box = this.state.boxes[key];
       if (!box.stats.stock) continue;
@@ -92,6 +101,7 @@ class Physics {
   restartGame() {
     this.state.player.stats.isDead = true;
     this.reinitTime();
+    this.perkManager.reinit();
     this.state.resetFirePosX();
     this.revivePlayer(this.state.player, this.newTimeStamp);
     this.resetStocks();
@@ -101,9 +111,10 @@ class Physics {
 
   computeNewState() {
     let now = GetTime();
-    let newTimeStamp = now - this.initTime;
-    this.myGameTime = now - this.realInitTime;
-    let elapsedTime = newTimeStamp - this.state.timeStamp;
+    //let newTimeStamp = now - this.initTime;
+    //this.myGameTime = now - this.realInitTime;
+    let newTimeStamp = now;
+    let elapsedTime = now - this.state.timeStamp;
 
     //console.log(this.state.physicsStats.gameStatus.paused);
 
@@ -116,11 +127,13 @@ class Physics {
       //console.log(elapsedTime);
       let before = GetTime();
       if (!player.stats.isDead) {
+        this.tryBoxAction(elapsedTime, player);
         this.movePlayer(elapsedTime, player, key);
         this.applyPressure(elapsedTime, player);
-        this.moveBoxes(player, newTimeStamp);
         // NOTE: This second applyPressure is to release the box that was pressed under the player in case if he was stopped by another box.
         this.applyPressure(elapsedTime, player);
+        this.moveBoxes(player, newTimeStamp);
+        this.checkPerks(player);
         this.updateStocks(key);
         this.tryFire(this.state.player, newTimeStamp, this.state.playerKeys);
         if (player.getBottomY() < 5) {
@@ -130,7 +143,7 @@ class Physics {
           this.state.physicsStats.gameStatus.winner = true;
         }
         if (elapsedTime > 0) this.state.gameTime += elapsedTime;
-        this.moveFire(player, elapsedTime);
+        //this.moveFire(player, elapsedTime);
       }
       /*console.log(
         "Compute state took:",
@@ -149,14 +162,17 @@ class Physics {
     let oldFirst = oldLength > 0 ? this.state.stockFilter[0] : "";
     this.setLeftGear();
     this.setRightGear();
-    if (!this.state.rightGear.activeId) return;
+    /*if (!this.state.rightGear.activeId) return;
     let stockFilter = [];
     for (let letter of rightGearLetters[this.state.rightGear.activeId - 1]) {
       stockFilter.push(
         leftGearLetters[this.state.leftGear.activeId + 1].toLowerCase() +
           (letter == " " ? "" : letter.toLowerCase())
       );
-    }
+    }*/
+    let stockFilter = [
+      leftGearLetters[this.state.leftGear.activeId + 1].toLowerCase(),
+    ];
     this.state.stockFilter = [];
     for (let key of stockFilter) {
       if (!this.state.stockMap[key]) continue;
@@ -224,8 +240,35 @@ class Physics {
     for (var key in this.state.boxes) {
       let box = this.state.boxes[key];
       if (!box.stats.interactable) continue;
+      // We do not pressure moving boxes.
+      // FIXME
+      //console.log("fixme, need to use movey here instead??");
+      if (box.stats.linear.movet != 0) continue;
       this.pressBox(box, player, elapsedTime);
     }
+  }
+
+  tryBoxAction(elapsedTime, player) {
+    for (var key in this.state.boxes) {
+      let box = this.state.boxes[key];
+      if (!box.stats.interactable) continue;
+      if (!box.stats.action) continue;
+      // FIXME: move player with the box.
+      // FIXME: fix bug in player moving on moving box.
+      this.actionBox(box, player, elapsedTime);
+    }
+  }
+
+  actionBox(box, player, elapsedTime) {
+    if (elapsedTime <= 0) return false;
+    if (!box.stats.action) return false;
+    let distance = Math.max(
+      Math.max(0, box.getLeftX() - player.getRightX()),
+      Math.max(0, player.getLeftX() - box.getRightX())
+    );
+    let touching = this.isPlayerTouchingBoxTop(player, box);
+    box.stats.action(elapsedTime, touching, distance);
+    return true;
   }
 
   setLeftGear() {
@@ -258,12 +301,50 @@ class Physics {
         1,
         ((this.state.player.getLeftX() - this.state.firePosX) /
           this.state.worldWidth) *
-          50
+          45
       );
     this.state.firePosX +=
       mult * elapsedTime * (this.state.worldWidth / 300000);
     if (this.state.firePosX > this.state.player.getLeftX() + 50) {
       this.die("2022 got to you! Start the year over.");
+    }
+  }
+
+  checkPerks(player) {
+    let toDelete = [];
+    for (let k in this.perkManager.perks) {
+      let perk = this.perkManager.perks[k];
+      let perkLeftX = perk.stats.position[0];
+      let perkBottomY = perk.stats.position[1];
+      let perkRightX = perkLeftX + perk.stats.w;
+      let perkTopY = perkBottomY + perk.stats.h;
+      // Check that perk is inside the players position
+      if (
+        !(
+          player.getLeftX() > perkRightX ||
+          player.getRightX() < perkLeftX ||
+          player.getBottomY() > perkTopY ||
+          player.getTopY() < perkBottomY
+        )
+      ) {
+        this.applyPerk(player, perk);
+        // Delete perk as it has been picked up
+        toDelete.push(k);
+      }
+    }
+    for (let k of toDelete) this.perkManager.deletePerk(k);
+  }
+
+  applyPerk(player, perk) {
+    if (perk.onCapture != undefined) perk.onCapture(this.state.timeStamp);
+    if (perk.execute != undefined) {
+      perk.execute(
+        this,
+        player,
+        this.state.timeStamp,
+        0, //RandomString() /*perkHash*/,
+        true /*activate*/
+      );
     }
   }
 
@@ -314,6 +395,11 @@ class Physics {
   }
 
   tryFire(player, newTimeStamp, keys) {
+    let elapsedTime = newTimeStamp - this.state.timeStamp;
+    this.state.stockCooldown = Math.max(
+      0,
+      this.state.stockCooldown - elapsedTime
+    );
     //if (!keys.leftClick) return;
     if (this.state.clicks <= this.clicks) {
       return;
@@ -327,16 +413,13 @@ class Physics {
       realId += this.state.stockFilter.length;
     }
     if (!this.state.stockFilter[realId]) return;
+    if (this.state.stockCooldown > 0) return;
 
-    if (this.state.lastBoxUpdate && GetTime() - this.state.lastBoxUpdate < 150)
+    /*if (this.state.player.stats.stockChanges >= 99) {
       return;
-
-    if (this.state.player.stats.stockChanges >= 99) {
-      return;
-    }
+    }*/
     this.state.player.stats.stockChanges++;
-
-    this.state.lastBoxUpdate = GetTime();
+    this.state.stockCooldown = 3000;
 
     this.state.symbol = this.state.stockFilter[realId];
     //if (this.state.symbol == "goog") this.state.symbol = "ko";
@@ -387,13 +470,13 @@ class Physics {
   moveBoxes(player, newTimeStamp) {
     for (var key in this.state.boxes) {
       let box = this.state.boxes[key];
+      if (!box.stats.interactable) continue;
       if (
         box.stats.linear == undefined ||
         (box.stats.linear.movey == 0 && box.stats.linear.movex == 0) ||
         box.stats.linear.movet == 0
       )
         continue;
-      if (!box.stats.interactable) continue;
 
       this.skipBoxCheck = key;
       // First check for touching

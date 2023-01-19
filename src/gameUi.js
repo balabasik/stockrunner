@@ -503,6 +503,10 @@ class GameUi extends Component {
   }
 
   renderRightGear() {
+    let rightGearAngle = this.props.gameState
+      ? Math.floor((this.props.gameState.stockCooldown / 3000) * 90)
+      : 0;
+    rightGearAngle = Math.floor(rightGearAngle / 15) * 15;
     return (
       <div
         id="gameui-right-gear-things"
@@ -543,12 +547,8 @@ class GameUi extends Component {
             right: -200,
             bottom: -200,
             overflow: "hidden",
-            transform: this.props.gameState
-              ? "rotate(" +
-                Math.floor(this.props.gameState.rightGear.angle - 45 - 45) +
-                "deg)"
-              : "",
-            transition: "transform ease-in-out 0.3s",
+            transform: "rotate(" + rightGearAngle + "deg)",
+            transition: "transform ease-in-out 0.2s",
           }}
         >
           <img
@@ -561,24 +561,30 @@ class GameUi extends Component {
             }}
             src="gear.svg"
           />
-          {rightGearLetters.map((letter, id) => {
-            let visible = true;
-            let active =
-              this.props.gameState &&
-              this.props.gameState.rightGear.activeId == id + 1;
+          {[-3, -2, -1, 0, 1, 2, 3].map((num, id) => {
+            let active = rightGearAngle == 0;
+            let r = 20;
+            let x = num == 0 ? 3 * r : r;
+            let y = r;
+            let d = num == 0 ? r / 2 : num % 2 == 0 ? (r * 3) / 4 : 0;
             return (
               <div
                 key={id}
                 style={{
                   position: "absolute",
-                  width: letter.length * 25,
-                  height: 40,
-                  right: 88 + 200,
-                  bottom: -20 + 200,
-                  backgroundColor: active ? "#ffffae" : "rgb(213, 213, 213)",
-                  border: active ? "3px solid #b62121" : "3px solid #5b5b5b",
-                  borderRadius: 10,
-                  transformOrigin: "" + (88 + letter.length * 25) + "px 20px", //"-12px 124px",
+                  width: x,
+                  height: y,
+                  right: 85 + d + (40 - x) / 2 + 20 + 200,
+                  bottom: -20 + 200 + (40 - y) / 2,
+                  backgroundColor: active ? "#8fff8d" : "rgb(213, 213, 213)",
+                  border: active ? "3px solid #453929" : "3px solid #5b5b5b",
+                  borderRadius: r / 4,
+                  transformOrigin:
+                    "" +
+                    (85 + 20 + d + x + (40 - x) / 2) +
+                    "px " +
+                    y / 2 +
+                    "px", //"-12px 124px",
                   transform: "rotate(" + Math.floor((id - 1) * 22.5) + "deg)",
                   color: "black",
                   fontSize: 24,
@@ -586,12 +592,8 @@ class GameUi extends Component {
                   justifyContent: "center",
                   alignItems: "center",
                   fontFamily: "DenkOne-Regular",
-                  //transition: "scale ease-in-out 0.3s",
-                  opacity: visible ? 1 : 0,
                 }}
-              >
-                {letter}
-              </div>
+              />
             );
           })}
         </div>
@@ -707,9 +709,9 @@ class GameUi extends Component {
 
   renderProgress() {
     let progress = this.props.gameState
-      ? this.props.gameState.player.stats.stockChanges
+      ? this.props.gameState.player.stats.bitcoins
       : 0;
-    let seconds = this.props.gameState ? this.props.gameState.gameTime : 0;
+    let seconds = this.props.gameState ? this.props.gameState.timeStamp : 0;
     let mm = Math.floor(seconds / 60 / 1000) % 100;
     if (mm < 10) mm = "0" + mm;
     let ss = Math.floor(seconds / 1000) % 60;
@@ -760,6 +762,22 @@ class GameUi extends Component {
             //overflow: "hidden",
           }}
         >
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontFamily: "AudioWide-Regular",
+              color: "#606060",
+            }}
+          >
+            {"CRYPTO"}
+          </div>
           <div
             style={{
               position: "absolute",

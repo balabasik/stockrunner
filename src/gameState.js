@@ -62,6 +62,9 @@ class GameState {
     this.stockFilter = [];
     this.shiftStockId = 0;
     this.clicks = 0;
+    this.perks = {};
+    this.perkCreationPlaces = [[0, 0]];
+    this.stockCooldown = 0;
 
     this.resetPhysicsStats();
     this.resetFirePosX();
@@ -75,6 +78,7 @@ class GameState {
   resetPhysicsStats() {
     this.physicsStats = {
       gravityG: 0.009, //0.0044,
+      invisible: false,
       gameStatus: { paused: true, winner: false },
     };
   }

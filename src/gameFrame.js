@@ -145,6 +145,7 @@ function RenderPlayer(player, mirrorY) {
 class GameWorld extends Component {
   constructor(props) {
     super(props);
+    this.perkBumpTime = {};
   }
 
   noOverlapBox(box) {
@@ -181,9 +182,15 @@ class GameWorld extends Component {
           bottom: Math.floor(box.getBottomY(this.props.gameState.timeStamp)),
           width: Math.floor(box.getW()),
           height: Math.floor(box.getH()),
-          transition: this.props.gameState.transitionDelay
-            ? "bottom ease-in-out 0.2s"
-            : "",
+          transition:
+            this.props.gameState.transitionDelay && box.stats.linear.movet == 0
+              ? "bottom ease-in-out 0.2s"
+              : "",
+          opacity:
+            (box.stats.stock || box.stats.fakeStock) &&
+            this.props.gameState.physicsStats.invisible
+              ? 0
+              : 1,
         }}
       />
     );
@@ -284,6 +291,53 @@ class GameWorld extends Component {
     );
   }
 
+  renderPerks(key) {
+    let perk = this.props.gameState.perks[key].stats;
+
+    if (this.noOverlap(perk.position[0], perk.position[1], perk.w, perk.h))
+      return "";
+
+    let perkSrc = "./perk_" + perk.type + ".png";
+    let time = GetTime();
+    if (this.perkBumpTime[key] == undefined) this.perkBumpTime[key] = time;
+    let timeSinceBump = time - this.perkBumpTime[key];
+    let left = Math.floor(perk.position[0]);
+    let speedY = 0.04;
+    let period = 700; // ms
+    let shiftY =
+      speedY * timeSinceBump -
+      (speedY / period) * timeSinceBump * timeSinceBump;
+    shiftY = Math.max(0, shiftY);
+    if (shiftY == 0) this.perkBumpTime[key] = time;
+    let bottom = Math.floor(perk.position[1]) + shiftY;
+    let scale = 1;
+    let width = perk.w * scale;
+    let height = perk.h / scale;
+    return (
+      <div
+        key={key}
+        style={{
+          position: "absolute",
+          left,
+          bottom,
+          width,
+          height,
+        }}
+      >
+        <img
+          src={perkSrc}
+          style={{
+            position: "absolute",
+            left: 0,
+            bottom: 0,
+            width: "100%",
+            height: "100%",
+          }}
+        />
+      </div>
+    );
+  }
+
   getShadow() {
     if (!renderShadow) return "";
     let xShadow =
@@ -343,6 +397,9 @@ class GameWorld extends Component {
           >
             {Object.keys(this.props.gameState.boxes).map((key) =>
               this.renderBox(key)
+            )}
+            {Object.keys(this.props.gameState.perks).map((key) =>
+              this.renderPerks(key)
             )}
             {RenderPlayer(
               this.props.gameState.player,

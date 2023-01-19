@@ -21,6 +21,7 @@ class Player {
     this.stats.isWalking = false;
     this.stats.isTouchingBox = false;
     this.stats.stockChanges = 0;
+    this.stats.bitcoins = 0;
 
     this.stats.isDead = true; // on creation player is dead
     this.stats.speedX = 0;
