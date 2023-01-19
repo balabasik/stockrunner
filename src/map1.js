@@ -119,25 +119,25 @@ function createBlockLower(state, x) {
   let y = state.worldHeight * 0.1;
   let id = state.createStaticBox(
     x + 5,
-    y - 1400,
+    y - 450,
     brickW - 5,
-    1400,
+    450,
     {
-      ...getBoxBgStyle("block.png"),
+      ...getBoxBgStyle("block_short.png"),
     },
     { sideBump: true, resistance: 0 }
   );
   let box = state.boxes[id];
   box.stats.action = (elapsedTime, touching, distance) => {
     let near = distance > -100 && distance < 100;
-    if (near && box.getBottomY() < state.worldHeight * 0.5 - 1400) {
+    if (near && box.getBottomY() < state.worldHeight * 0.5 - 450) {
       box.setBottomY(
         Math.min(
-          state.worldHeight * 0.5 - 1400,
+          state.worldHeight * 0.5 - 450,
           box.getBottomY() + elapsedTime * 3
         )
       );
-    } else if (!near && box.getBottomY() > y - 1400) {
+    } else if (!near && box.getBottomY() > y - 450) {
       box.setBottomY(Math.max(y - 1400, box.getBottomY() - elapsedTime * 3));
     }
   };
@@ -169,14 +169,14 @@ function createWindow(state, x) {
 }
 
 function createBlockUpper(state, x) {
-  let y = state.worldHeight * 0.9;
+  let y = state.worldHeight * 0.89;
   let id = state.createStaticBox(
     x + 5,
     y,
     brickW - 5,
-    1400,
+    450,
     {
-      ...getBoxBgStyle("block.png"),
+      ...getBoxBgStyle("block_short.png"),
       transform: "scaleY(-1)",
     },
     { sideBump: true, resistance: 0 }
