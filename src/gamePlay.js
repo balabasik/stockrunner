@@ -1147,6 +1147,8 @@ class GamePlay extends Component {
             <Winner
               trades={this.state.gameState.player.stats.stockChanges}
               activeAvatar={this.state.activeAvatar}
+              bitcoins={this.state.gameState.player.stats.bitcoins}
+              timeStamp={this.state.gameState.timeStamp}
             />
           ) : (
             <div>

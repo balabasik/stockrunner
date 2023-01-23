@@ -170,7 +170,17 @@ class GameWorld extends Component {
     let style = box.stats.overrideBg
       ? { ...box.stats.style, backgroundColor: box.stats.overrideBg }
       : box.stats.style;
-
+    let textProps = {};
+    if (box.stats.text) {
+      textProps = {
+        fontSize: box.stats.text.fontSize,
+        fontFamily: box.stats.text.fontFamily,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: box.stats.text.color,
+      };
+    }
     return (
       <div
         key={box.stats.id}
@@ -182,17 +192,22 @@ class GameWorld extends Component {
           bottom: Math.floor(box.getBottomY(this.props.gameState.timeStamp)),
           width: Math.floor(box.getW()),
           height: Math.floor(box.getH()),
-          transition:
-            this.props.gameState.transitionDelay && box.stats.linear.movet == 0
-              ? "bottom ease-in-out 0.2s"
-              : "",
+          transition: box.stats.stockDiff
+            ? "height ease-in-out 0.2s" //background-color ease-in-out 0.2s"
+            : this.props.gameState.transitionDelay &&
+              box.stats.linear.movet == 0
+            ? "bottom ease-in-out 0.2s"
+            : "",
           opacity:
             (box.stats.stock || box.stats.fakeStock) &&
             this.props.gameState.physicsStats.invisible
               ? 0
               : 1,
+          ...textProps,
         }}
-      />
+      >
+        {box.stats.text ? box.stats.text.text : undefined}
+      </div>
     );
   }
 

@@ -297,7 +297,7 @@ class GameUi extends Component {
           fontFamily: "Slackey-Regular",
         }}
       >
-        {"Stock Runner"}
+        {"#stockrunner"}
       </div>
     );
   }
@@ -319,8 +319,8 @@ class GameUi extends Component {
           flexDirection: "column",
           fontSize: GetPx(this.state.rank.w / 3),
           fontFamily: "Iceland-Regular",
-          letterSpacing: "-5px",
-          textIndent: "-5px",
+          letterSpacing: "-2px",
+          textIndent: "-2px",
         }}
       >
         {this.props.gameState && this.props.gameState.ready

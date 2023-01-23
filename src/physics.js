@@ -90,12 +90,8 @@ class Physics {
 
   resetStocks() {
     this.state.symbol = "apa";
-    //this.setStocks();
-    /*for (let key in this.state.boxes) {
-      let box = this.state.boxes[key];
-      if (!box.stats.stock) continue;
-      box.setBottomY(-this.state.worldHeight / 2);
-    }*/
+    this.setStocks();
+    this.setStockDiff();
   }
 
   restartGame() {
@@ -133,6 +129,7 @@ class Physics {
         // NOTE: This second applyPressure is to release the box that was pressed under the player in case if he was stopped by another box.
         this.applyPressure(elapsedTime, player);
         this.moveBoxes(player, newTimeStamp);
+        this.updateLastSliders(newTimeStamp);
         this.checkPerks(player);
         this.updateStocks(key);
         this.tryFire(this.state.player, newTimeStamp, this.state.playerKeys);
@@ -151,8 +148,25 @@ class Physics {
         "Elapsed time:",
         elapsedTime
       );*/
+      this.state.timeStamp = newTimeStamp;
     }
-    this.state.timeStamp = newTimeStamp;
+  }
+
+  updateLastSliders(newTimeStamp) {
+    let slider0 = this.state.boxes[this.state.lastSlider0];
+    let slider1 = this.state.boxes[this.state.lastSlider1];
+    let block = this.state.boxes[this.state.lastBlock];
+
+    // Check if slider0 is in proximity of the last block, and if block is open
+    if (
+      block.getLeftX(newTimeStamp) - slider0.getRightX(newTimeStamp) < 20 &&
+      block.getBottomY(newTimeStamp) - slider0.getTopY(newTimeStamp) >= 0
+    ) {
+      slider0.stats.interactable = false;
+      slider0.stats.style.backgroundImage = "";
+      slider1.stats.interactable = true;
+      slider1.stats.style.backgroundImage = "url(slider.png)";
+    }
   }
 
   updateStocks(key) {
@@ -161,7 +175,7 @@ class Physics {
     let oldLength = this.state.stockFilter.length;
     let oldFirst = oldLength > 0 ? this.state.stockFilter[0] : "";
     this.setLeftGear();
-    this.setRightGear();
+    //this.setRightGear();
     /*if (!this.state.rightGear.activeId) return;
     let stockFilter = [];
     for (let letter of rightGearLetters[this.state.rightGear.activeId - 1]) {
@@ -190,8 +204,15 @@ class Physics {
     if (
       oldLength != this.state.stockFilter.length ||
       (oldLength > 0 && oldFirst != this.state.stockFilter[0])
-    )
+    ) {
       this.state.shiftStockId = 0;
+    }
+
+    let selected = this.getSelectedSymbol();
+    if (selected != this.selectedSymbol) {
+      this.setStockDiff();
+      this.selectedSymbol = selected;
+    }
   }
 
   pressBox(box, player, elapsedTime) {
@@ -267,7 +288,7 @@ class Physics {
       Math.max(0, player.getLeftX() - box.getRightX())
     );
     let touching = this.isPlayerTouchingBoxTop(player, box);
-    box.stats.action(elapsedTime, touching, distance);
+    box.stats.action(elapsedTime, touching, distance, player);
     return true;
   }
 
@@ -354,6 +375,35 @@ class Physics {
     this.pause(true);
   }
 
+  setStockDiff() {
+    if (!this.state || !this.state.ready) return;
+    let goodDiff = 0;
+    for (let date in this.state.dateToIds) {
+      let boxStockDiff = this.state.boxes[this.state.dateToIds[date] + 1];
+      let newSymbol = this.getSelectedSymbol();
+      let diff =
+        this.state.stocks[this.state.symbol][date] -
+        this.state.stocks[newSymbol][date];
+
+      if (
+        this.state.stocks[this.state.symbol][date] >= 0 &&
+        this.state.stocks[newSymbol][date] >= 0
+      ) {
+        goodDiff = diff;
+      } else {
+        diff = goodDiff;
+      }
+      let color = diff > 0 ? "red" : "green";
+      let ratio =
+        diff > 0
+          ? diff / this.state.stocks[this.state.symbol][date]
+          : -diff / this.state.stocks[newSymbol][date];
+      //console.log(date, diff, ratio, color);
+      boxStockDiff.setH(ratio * this.state.worldHeight * 0.05);
+      boxStockDiff.stats.overrideBg = color;
+    }
+  }
+
   setStocks() {
     if (!this.state || !this.state.ready) return;
     let bottom = -0.7;
@@ -394,6 +444,17 @@ class Physics {
     }
   }
 
+  getSelectedSymbol() {
+    let realId =
+      Math.floor(this.state.stockFilter.length / 2 + this.state.shiftStockId) %
+      this.state.stockFilter.length;
+    while (realId < 0) {
+      realId += this.state.stockFilter.length;
+    }
+    if (!this.state.stockFilter[realId]) return "apa";
+    return this.state.stockFilter[realId];
+  }
+
   tryFire(player, newTimeStamp, keys) {
     let elapsedTime = newTimeStamp - this.state.timeStamp;
     this.state.stockCooldown = Math.max(
@@ -406,13 +467,7 @@ class Physics {
     }
     this.clicks = this.state.clicks;
 
-    let realId =
-      Math.floor(this.state.stockFilter.length / 2 + this.state.shiftStockId) %
-      this.state.stockFilter.length;
-    while (realId < 0) {
-      realId += this.state.stockFilter.length;
-    }
-    if (!this.state.stockFilter[realId]) return;
+    let newSymbol = this.getSelectedSymbol();
     if (this.state.stockCooldown > 0) return;
 
     /*if (this.state.player.stats.stockChanges >= 99) {
@@ -421,7 +476,7 @@ class Physics {
     this.state.player.stats.stockChanges++;
     this.state.stockCooldown = 3000;
 
-    this.state.symbol = this.state.stockFilter[realId];
+    this.state.symbol = newSymbol;
     //if (this.state.symbol == "goog") this.state.symbol = "ko";
     //else this.state.symbol = "goog";
 
@@ -430,9 +485,10 @@ class Physics {
     this.state.transitionDelay = true;
     setTimeout(() => {
       this.state.transitionDelay = false;
-    }, 100);
+    }, 200);
 
     this.setStocks();
+    this.setStockDiff();
   }
 
   revivePlayer(player, timeStamp) {

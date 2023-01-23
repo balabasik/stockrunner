@@ -216,6 +216,11 @@ class Winner extends Component {
         src="stars.png"
       />
     );
+    let seconds = this.props.timeStamp;
+    let mm = Math.floor(seconds / 60 / 1000) % 100;
+    if (mm < 10) mm = "0" + mm;
+    let ss = Math.floor(seconds / 1000) % 60;
+    if (ss < 10) ss = "0" + ss;
 
     return (
       <div style={winnerPageStyle}>
@@ -230,6 +235,60 @@ class Winner extends Component {
             transform: "translateX(-50%)",
           }}
         >
+          <div
+            style={{
+              position: "absolute",
+              width: "200%",
+              height: "100%",
+              top: 0,
+              left: "-200%",
+              fontSize: 60,
+              fontFamily: "JotiOne-Regular",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              //backgroundColor: "blue",
+            }}
+          >
+            {mm + " : " + ss}
+          </div>
+          <div
+            style={{
+              position: "absolute",
+              width: 300,
+              height: 200,
+              top: -25,
+              left: "135%",
+              sbackgroundColor: "#ff0000",
+            }}
+          >
+            <img
+              src={"./perk_bitcoin.png"}
+              style={{
+                position: "absolute",
+                left: 0,
+                bottom: 0,
+                width: 120,
+                height: 120,
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                left: 140,
+                top: 80,
+                width: 120,
+                height: 120,
+                fontSize: 60,
+                fontFamily: "JotiOne-Regular",
+                display: "flex",
+                alignItems: "center",
+                //justifyContent: "center",
+              }}
+            >
+              {"X" + this.props.bitcoins}
+            </div>
+          </div>
           {RenderPlayer(this.avatars[this.activeAvatar])}
         </div>
         <div

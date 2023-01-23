@@ -65,8 +65,8 @@ function createPillar(state, x, y, mirror, dynamic, fake, action) {
   }
 }
 
-function createSlider(state, x, y, movex, movet) {
-  state.createDynamicBox(
+function createSlider(state, x, y, movex, movet, isLastSlider0, isLastSlider1) {
+  let id = state.createDynamicBox(
     x + 5,
     y,
     brickW - 5,
@@ -77,6 +77,13 @@ function createSlider(state, x, y, movex, movet) {
     { ...getBoxBgStyle("slider.png") },
     { sideBump: false }
   );
+  if (isLastSlider0) {
+    state.lastSlider0 = id;
+  } else if (isLastSlider1) {
+    state.lastSlider1 = id;
+    state.boxes[id].stats.interactable = false;
+    state.boxes[id].stats.style.backgroundImage = "";
+  }
 }
 
 function createButton(state, x, y, action) {
@@ -110,12 +117,12 @@ function createButton(state, x, y, action) {
   );
 }
 
-function createBlock(state, x) {
-  createBlockLower(state, x);
-  createBlockUpper(state, x);
+function createBlock(state, x, inverseNear, playerCondition, lastBlock) {
+  createBlockLower(state, x, inverseNear, playerCondition);
+  createBlockUpper(state, x, inverseNear, playerCondition, lastBlock);
 }
 
-function createBlockLower(state, x) {
+function createBlockLower(state, x, inverseNear, playerCondition) {
   let y = state.worldHeight * 0.1;
   let id = state.createStaticBox(
     x + 5,
@@ -128,8 +135,12 @@ function createBlockLower(state, x) {
     { sideBump: true, resistance: 0 }
   );
   let box = state.boxes[id];
-  box.stats.action = (elapsedTime, touching, distance) => {
+  box.stats.action = (elapsedTime, touching, distance, player) => {
     let near = distance > -100 && distance < 100;
+    if (playerCondition) {
+      near &= playerCondition(player);
+    }
+    if (inverseNear) near = !near;
     if (near && box.getBottomY() < state.worldHeight * 0.5 - 450) {
       box.setBottomY(
         Math.min(
@@ -168,7 +179,7 @@ function createWindow(state, x) {
   );
 }
 
-function createBlockUpper(state, x) {
+function createBlockUpper(state, x, inverseNear, playerCondition, lastBlock) {
   let y = state.worldHeight * 0.89;
   let id = state.createStaticBox(
     x + 5,
@@ -181,9 +192,14 @@ function createBlockUpper(state, x) {
     },
     { sideBump: true, resistance: 0 }
   );
+  if (lastBlock) state.lastBlock = id;
   let box = state.boxes[id];
-  box.stats.action = (elapsedTime, touching, distance) => {
+  box.stats.action = (elapsedTime, touching, distance, player) => {
     let near = distance > -100 && distance < 100;
+    if (playerCondition) {
+      near &= playerCondition(player);
+    }
+    if (inverseNear) near = !near;
     if (near && box.getBottomY() > state.worldHeight * 0.5) {
       box.setBottomY(
         Math.max(state.worldHeight * 0.5, box.getBottomY() - elapsedTime * 3)
@@ -232,8 +248,8 @@ function LoadMap1(state) {
   });
 
   // 160 is player width
-  state.playerBirthPlaces = [[brickW / 2 - 160 / 2, state.worldHeight * 0.8]];
-  //state.playerBirthPlaces = [[80000, state.worldHeight * 0.8]];
+  state.playerBirthPlaces = [[brickW * 347, state.worldHeight * 0.8]];
+  //state.playerBirthPlaces = [[brickW / 2 - 160 / 2, state.worldHeight * 0.8]];
   LoadStocks((stocks) => {
     OnStocksReady(state, stocks);
   });
@@ -254,70 +270,125 @@ function OnStocksReady(state, stocks) {
 
   let pillars = {
     0: { y: state.worldHeight * 0.5, mirror: false },
-    5: {
-      window: true,
-    },
-    9: {
-      y: state.worldHeight * 0.6,
+    8: {
+      y: state.worldHeight * 0.75,
       mirror: false,
-      dynamic: { movex: 600, movey: 0, movet: 1800 },
+      dynamic: { movex: brickW * 4, movey: 0, movet: 4000 },
       slider: true,
       stock: true,
     },
-    7: {
-      y: state.worldHeight * 0.3,
-      block: true,
+    14: { y: state.worldHeight * 0.5, mirror: false },
+    28: { y: state.worldHeight * 0.7, mirror: false },
+    35: {
+      y: state.worldHeight * 0.75,
+      mirror: false,
+      dynamic: { movex: brickW * 14, movey: 0, movet: 14000 },
+      slider: true,
+      stock: true,
     },
-    8: {
-      y: state.worldHeight * 0.3,
+    42: { y: state.worldHeight * 0.3, mirror: false },
+    56: { y: state.worldHeight * 0.6, mirror: true }, // hard
+    70: {
+      y: state.worldHeight * 0.4,
       mirror: false,
       action: "hide",
       button: true,
     },
-    12: {
-      y: state.worldHeight * 0.3,
+    84: {
+      y: state.worldHeight * 0.4,
       mirror: false,
       action: "reveal",
       button: true,
     },
-    16: { y: state.worldHeight * 0.5, mirror: false, fake: true },
-    3: { y: state.worldHeight * 0.1, mirror: false, action: "goup" },
-    42: { y: state.worldHeight * 0.6, mirror: true, stock: true }, // hard
-    56: { y: state.worldHeight * 0.3, mirror: false },
-    70: { y: state.worldHeight * 0.7, mirror: false }, // semi hard
-    84: { y: state.worldHeight * 0.6, mirror: true },
-    98: { y: state.worldHeight * 0.6, mirror: true },
-    99: { y: state.worldHeight * 0.4, mirror: false }, // hard
-    112: { y: state.worldHeight * 0.4, mirror: false },
-    126: { y: state.worldHeight * 0.7, mirror: false },
-    140: { y: state.worldHeight * 0.5, mirror: true }, // hard
+    98: {
+      window: true,
+    },
+    112: { y: state.worldHeight * 0.1, mirror: false, action: "goup" },
+    126: { y: state.worldHeight * 0.6, mirror: false, fake: true },
+    140: {
+      block: true,
+    },
+    148: {
+      y: state.worldHeight * 0.7,
+      dynamic: { movex: brickW * 14, movey: 0, movet: 14000 },
+      slider: true,
+      stock: true,
+    },
     154: { y: state.worldHeight * 0.4, mirror: false },
-    168: { y: state.worldHeight * 0.8, mirror: true },
-    168.5: { y: state.worldHeight * 0.4, mirror: false },
-    185: { y: state.worldHeight * 0.4, mirror: true },
+    168: {
+      y: state.worldHeight * 0.4,
+      mirror: false,
+      action: "reveal",
+      button: true,
+    },
+    178: {
+      y: state.worldHeight * 0.4,
+      mirror: false,
+      action: "hide",
+      button: true,
+    },
+    185: { y: state.worldHeight * 0.6, mirror: true }, // very hard (july 4)
     190: { y: state.worldHeight * 0.8, mirror: false }, // very hard (july 4)
-    210: { y: state.worldHeight * 0.4, mirror: false },
-    224: { y: state.worldHeight * 0.7, mirror: false },
-    238: { y: state.worldHeight * 0.7, mirror: true },
-    239: { y: state.worldHeight * 0.7, mirror: true }, // medium hard
+    210: { y: state.worldHeight * 0.7, mirror: false, fake: true },
+    224: { block: true },
     240: { y: state.worldHeight * 0.7, mirror: true },
     241: { y: state.worldHeight * 0.7, mirror: true }, // hard
-    252: { y: state.worldHeight * 0.3, mirror: false },
-    266: { y: state.worldHeight * 0.9, mirror: true },
-    280: { y: state.worldHeight * 0.5, mirror: false },
-    281: { y: state.worldHeight * 0.7, mirror: true }, // hard
-    294: { y: state.worldHeight * 0.3, mirror: false },
-    308: { y: state.worldHeight * 0.8, mirror: true }, // medium hard
+    248: { window: true },
+    255: {
+      y: state.worldHeight * 0.7,
+      dynamic: { movex: brickW * 14, movey: 0, movet: 14000 },
+      slider: true,
+      stock: true,
+    },
+    260: {
+      y: state.worldHeight * 0.6,
+      mirror: false,
+      action: "hide",
+      button: true,
+    }, // hard
+    280: { y: state.worldHeight * 0.5, mirror: true },
+    287: { y: state.worldHeight * 0.1, mirror: false, action: "goup" },
+    294: { block: true },
+    //// final part
+    308: { window: true },
     322: { y: state.worldHeight * 0.4, mirror: false },
-    336: { y: state.worldHeight * 0.7, mirror: false },
+    336: { y: state.worldHeight * 0.6, mirror: true },
+    343: {
+      y: state.worldHeight * 0.62,
+      dynamic: { movex: brickW * 18, movey: 0, movet: 18000 },
+      slider: true,
+      stock: true,
+      lastSlider1: true,
+    },
+    343.5: {
+      y: state.worldHeight * 0.62,
+      dynamic: { movex: brickW * 6, movey: 0, movet: 6000 },
+      slider: true,
+      stock: true,
+      visCondition: (gameState, player) => {},
+      lastSlider0: true,
+    },
+    350: {
+      block: true,
+      inverseNear: true,
+      playerCondition: (player) => {
+        return (
+          player.getBottomY() > state.worldHeight * 0.4 &&
+          player.getBottomY() < state.worldHeight * 0.6
+        );
+      },
+      lastBlock: true,
+    },
     352: { y: state.worldHeight * 0.9, mirror: true }, // start final
     352.5: { y: state.worldHeight * 0.085, mirror: false },
     353: { y: state.worldHeight * 0.9, mirror: true },
     353.5: { y: state.worldHeight * 0.085, mirror: false },
     354: { y: state.worldHeight * 0.9, mirror: true },
     354.5: { y: state.worldHeight * 0.085, mirror: false },
-    355: { y: state.worldHeight * 0.9, mirror: true },
-    355.5: { y: state.worldHeight * 0.085, mirror: false },
+    //355: { y: state.worldHeight * 0.9, mirror: true },
+    //355.5: { y: state.worldHeight * 0.085, mirror: false },
+    357: { y: state.worldHeight * 0.9, mirror: true },
+    357.5: { y: state.worldHeight * 0.085, mirror: false },
     358: { y: state.worldHeight * 0.9, mirror: true },
     358.5: { y: state.worldHeight * 0.085, mirror: false },
     359: { y: state.worldHeight * 0.9, mirror: true },
@@ -347,12 +418,20 @@ function OnStocksReady(state, stocks) {
             i * brickW,
             pillars[i].y,
             pillars[i].dynamic.movex,
-            pillars[i].dynamic.movet
+            pillars[i].dynamic.movet,
+            pillars[i].lastSlider0,
+            pillars[i].lastSlider1
           );
         } else if (pillars[i].button) {
           createButton(state, i * brickW, pillars[i].y, pillars[i].action);
         } else if (pillars[i].block) {
-          createBlock(state, i * brickW);
+          createBlock(
+            state,
+            i * brickW,
+            pillars[i].inverseNear,
+            pillars[i].playerCondition,
+            pillars[i].lastBlock
+          );
         } else if (pillars[i].window) {
           createWindow(state, i * brickW);
         } else {
@@ -368,15 +447,27 @@ function OnStocksReady(state, stocks) {
         }
       }
       if (i + 0.5 in pillars) {
-        createPillar(
-          state,
-          i * brickW,
-          pillars[i + 0.5].y,
-          pillars[i + 0.5].mirror,
-          pillars[i + 0.5].dynamic,
-          pillars[i + 0.5].fake,
-          pillars[i + 0.5].action
-        );
+        if (pillars[i + 0.5].slider) {
+          createSlider(
+            state,
+            i * brickW,
+            pillars[i + 0.5].y,
+            pillars[i + 0.5].dynamic.movex,
+            pillars[i + 0.5].dynamic.movet,
+            pillars[i + 0.5].lastSlider0,
+            pillars[i + 0.5].lastSlider1
+          );
+        } else {
+          createPillar(
+            state,
+            i * brickW,
+            pillars[i + 0.5].y,
+            pillars[i + 0.5].mirror,
+            pillars[i + 0.5].dynamic,
+            pillars[i + 0.5].fake,
+            pillars[i + 0.5].action
+          );
+        }
       }
       if (
         (i in pillars && pillars[i].stock) ||
@@ -405,7 +496,7 @@ function OnStocksReady(state, stocks) {
     } else {
       id = state.createStaticBox(
         i * brickW + 5,
-        -state.worldHeight / 2,
+        -state.worldHeight * 0.7,
         brickW - 5,
         state.worldHeight,
         getStockBoxStyle(),
@@ -413,6 +504,19 @@ function OnStocksReady(state, stocks) {
       );
     }
     state.dateToIds[i] = id;
+    // NOTE: Its important that diff box is created next
+    state.createBgBox(
+      i * brickW + 5, //i * brickW + 5 + (brickW / 2 - brickW / 8 / 2),
+      0,
+      brickW - 5, //brickW / 8 - 5,
+      state.worldHeight * 0.05,
+      {
+        backgroundColor: "#44d5442f",
+        outline: "2px solid #0000007d",
+        borderRadius: 3,
+      },
+      { stockDiff: true }
+    );
   }
 
   // left wall
@@ -435,6 +539,23 @@ function OnStocksReady(state, stocks) {
     state.worldHeight + 200,
     {},
     { sideBump: true, wall: true }
+  );
+
+  // Don't look up
+  state.createBgBox(
+    state.worldWidth - 1960,
+    state.worldHeight * 0.425,
+    1500,
+    state.worldHeight * 0.2,
+    {},
+    {
+      text: {
+        text: "Don't look up!",
+        fontSize: 140,
+        fontFamily: "Slackey-Regular",
+        color: "#ffcf8780",
+      },
+    }
   );
 
   // floor

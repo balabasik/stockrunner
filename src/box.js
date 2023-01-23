@@ -47,6 +47,7 @@ class Box {
       deleteAfter: -1,
       stock: false,
       fakeStock: false,
+      stockDiff: false,
       resistance: 30, // how much box will go down when player is standing on it
       resistanceSpeed: 0.5,
       displacement: 0, // hom much box currently is displaced

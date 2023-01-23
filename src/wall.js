@@ -94,10 +94,13 @@ class Wall extends Component {
   render() {
     // We subtract 1000 so that wall doesn't start moving too fast
     let ratio = this.props.gameState
-      ? Math.max(
-          0,
-          (this.props.gameState.player.getLeftX() - 1000) /
-            this.props.gameState.worldWidth
+      ? Math.min(
+          0.99,
+          Math.max(
+            0,
+            (this.props.gameState.player.getLeftX() - 1000) /
+              (this.props.gameState.worldWidth - 2000)
+          )
         )
       : 0;
     let fw = this.props.gameState ? this.props.gameState.frameWidth : 2160;
