@@ -46,7 +46,7 @@ function LoadStocks(cb) {
         for (let name of stock_names) {
           let ret = [];
           ab.slice(idx, idx + 365).map((x) => {
-            ret.push(x < 0 ? -1 : 0.15 + (x / 100) * 0.65);
+            ret.push(x < 0 ? -1 : 0.1 + (x / 100) * (x / 100) * 0.8);
           });
           stocks[name] = ret;
           idx += 365;

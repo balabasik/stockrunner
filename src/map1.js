@@ -543,7 +543,7 @@ function OnStocksReady(state, stocks) {
 
   // Don't look up
   state.createBgBox(
-    state.worldWidth - 1960,
+    state.worldWidth - 1940,
     state.worldHeight * 0.425,
     1500,
     state.worldHeight * 0.2,

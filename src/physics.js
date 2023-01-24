@@ -393,13 +393,13 @@ class Physics {
       } else {
         diff = goodDiff;
       }
-      let color = diff > 0 ? "red" : "green";
+      let color = diff > 0 ? "#c7323286" : "#3ad43a8f";
       let ratio =
         diff > 0
           ? diff / this.state.stocks[this.state.symbol][date]
           : -diff / this.state.stocks[newSymbol][date];
       //console.log(date, diff, ratio, color);
-      boxStockDiff.setH(ratio * this.state.worldHeight * 0.05);
+      boxStockDiff.setH(ratio * this.state.worldHeight * 0.1);
       boxStockDiff.stats.overrideBg = color;
     }
   }
