@@ -106,6 +106,11 @@ class Wall extends Component {
     let fw = this.props.gameState ? this.props.gameState.frameWidth : 2160;
     let left = ratio * (fw / 8640 - 1) * 8640;
     let bottom = 100;
+    let seconds = this.props.gameState ? this.props.gameState.timeStamp : 0;
+    let mm = Math.floor(seconds / 60 / 1000) % 100;
+    if (mm < 10) mm = "0" + mm;
+    let ss = Math.floor(seconds / 1000) % 60;
+    if (ss < 10) ss = "0" + ss;
     return (
       <div
         style={{

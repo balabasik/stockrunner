@@ -90,6 +90,7 @@ class Physics {
 
   resetStocks() {
     this.state.symbol = "apa";
+    this.lastStockUpdate = GetTime();
     this.setStocks();
     this.setStockDiff();
   }
@@ -172,18 +173,17 @@ class Physics {
   updateStocks(key) {
     if (!this.state || !this.state.ready) return;
 
+    this.setLeftGear();
+
+    let now = GetTime();
+    if (now - this.lastStockUpdate < 200) {
+      return;
+    }
+    this.lastStockUpdate = now;
+
     let oldLength = this.state.stockFilter.length;
     let oldFirst = oldLength > 0 ? this.state.stockFilter[0] : "";
-    this.setLeftGear();
-    //this.setRightGear();
-    /*if (!this.state.rightGear.activeId) return;
-    let stockFilter = [];
-    for (let letter of rightGearLetters[this.state.rightGear.activeId - 1]) {
-      stockFilter.push(
-        leftGearLetters[this.state.leftGear.activeId + 1].toLowerCase() +
-          (letter == " " ? "" : letter.toLowerCase())
-      );
-    }*/
+
     let stockFilter = [
       leftGearLetters[this.state.leftGear.activeId + 1].toLowerCase(),
     ];

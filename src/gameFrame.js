@@ -199,7 +199,7 @@ class GameWorld extends Component {
             ? "bottom ease-in-out 0.2s"
             : "",
           opacity:
-            (box.stats.stock || box.stats.fakeStock) &&
+            (box.stats.stock || box.stats.fakeStock || box.stats.stockDiff) &&
             this.props.gameState.physicsStats.invisible
               ? 0
               : 1,
