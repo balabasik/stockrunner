@@ -317,7 +317,7 @@ class Physics {
   moveFire(player, elapsedTime) {
     // If player is 10% away from fire then fire moves 2x faster.
     let mult =
-      0.8 *
+      0.6 *
       Math.max(
         1,
         ((this.state.player.getLeftX() - this.state.firePosX) /

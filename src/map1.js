@@ -48,14 +48,15 @@ function createPillar(state, x, y, mirror, dynamic, fake, action) {
     if (action) {
       let box = state.boxes[id];
       box.stats.action = (elapsedTime, touching, distance) => {
-        let near = distance > -250 && distance < 250;
         if (action == "goup") {
+          let near = distance > -250 && distance < 250;
           if (near && box.getBottomY() < state.worldHeight * 1 - 1400) {
             box.setBottomY(box.getBottomY() + elapsedTime * 3);
           } else if (!near && box.getBottomY() > y - 1400) {
             box.setBottomY(box.getBottomY() - elapsedTime * 3);
           }
         } else if (action == "godown") {
+          let near = distance > -150 && distance < 150;
           if (near && box.getBottomY() > 0.1 * state.worldHeight) {
             box.setBottomY(box.getBottomY() - elapsedTime * 3);
           } else if (!near && box.getBottomY() < y) {
@@ -301,7 +302,74 @@ function LoadMap1(state) {
     [124, 0.83],
     [133, 0.76],
     [134, 0.76],
+    [148, 0.5],
+    [149, 0.5],
+    [148, 0.35],
+    [149, 0.35],
+    [159, 0.8],
+    [160, 0.8],
+    [162, 0.8],
+    [163, 0.8],
+    [174, 0.7],
+    [174, 0.65],
+    [174, 0.6],
+    [188, 0.57],
+    [189, 0.57],
+    [201, 0.5],
+    [201.5, 0.4],
+    [202, 0.3],
+    [202.5, 0.4],
+    [203, 0.5],
+    [217.5, 0.8],
+    [222.5, 0.8],
+    [227.5, 0.8],
+    [234, 0.5],
+    [235, 0.5],
+    [236, 0.5],
+    [237, 0.5],
+    [238, 0.5],
+    [250, 0.7],
+    [251, 0.7],
+    [252, 0.7],
+    [253, 0.7],
+    [260.4, 0.68],
+    [260, 0.58],
+    [261, 0.68],
+    [261.6, 0.68],
+    [262, 0.58],
+    [266, 0.35],
+    [266, 0.25],
+    [271, 0.35],
+    [271, 0.25],
+    [276, 0.35],
+    [276, 0.25],
+    [290, 0.7],
+    [291, 0.6],
+    [292, 0.5],
+    [293, 0.4],
+    [302, 0.4],
+    [303, 0.4],
+    [315, 0.5],
+    [319, 0.5],
+    [329.5, 0.6],
+    [330.5, 0.7],
+    [330.5, 0.5],
+    [331.5, 0.6],
+    [340, 0.7],
+    [342, 0.6],
+    [344, 0.7],
+    [346, 0.6],
+    [348, 0.7],
+    [353, 0.1],
+    [354, 0.1],
+    [355, 0.1],
+    [358, 0.1],
+    [359, 0.1],
+    [360, 0.1],
+    [361, 0.1],
+    [362, 0.1],
   ];
+  //console.log(perkPlaces.length);
   state.perkCreationPlaces = perkPlaces.map((pair) => {
     return [
       pair[0] * brickW - brickW / 2 - 120 / 2, // perkW = 120
@@ -310,7 +378,7 @@ function LoadMap1(state) {
   });
 
   // 160 is player width
-  state.playerBirthPlaces = [[brickW * 132, state.worldHeight * 0.6]];
+  state.playerBirthPlaces = [[brickW * 356, state.worldHeight * 0.6]];
   //state.playerBirthPlaces = [[brickW / 2 - 160 / 2, state.worldHeight * 0.8]];
   LoadStocks((stocks) => {
     OnStocksReady(state, stocks);
@@ -473,17 +541,19 @@ function OnStocksReady(state, stocks) {
     },
     148: {
       y: state.worldHeight * 0.7,
-      dynamic: { movex: brickW * 14, movey: 0, movet: 14000 },
+      dynamic: { movex: brickW * 11, movey: 0, movet: 11000 },
       slider: true,
       stock: true,
     },
     154: { y: state.worldHeight * 0.4, mirror: false },
+    160: { y: state.worldHeight * 0.9, mirror: false, action: "godown" },
     168: {
       y: state.worldHeight * 0.4,
       mirror: false,
       action: "reveal",
       button: true,
     },
+    173: { y: state.worldHeight * 0.9, mirror: true, stock: true },
     178: {
       y: state.worldHeight * 0.4,
       mirror: false,
@@ -493,10 +563,19 @@ function OnStocksReady(state, stocks) {
     185: { y: state.worldHeight * 0.6, mirror: true }, // very hard (july 4)
     190: { y: state.worldHeight * 0.8, mirror: false }, // very hard (july 4)
     210: { y: state.worldHeight * 0.7, mirror: false, fake: true },
+    214: { block: true },
+    219: { block: true },
     224: { block: true },
+    228: {
+      y: state.worldHeight * 0.4,
+      dynamic: { movex: brickW * 9, movey: 0, movet: 9000 },
+      slider: true,
+      stock: true,
+    },
     240: { y: state.worldHeight * 0.7, mirror: true },
     241: { y: state.worldHeight * 0.7, mirror: true }, // hard
     248: { window: true },
+    253: { window: true },
     255: {
       y: state.worldHeight * 0.7,
       dynamic: { movex: brickW * 14, movey: 0, movet: 14000 },
@@ -509,11 +588,38 @@ function OnStocksReady(state, stocks) {
       action: "hide",
       button: true,
     }, // hard
+    265: { y: state.worldHeight * 0.2, mirror: false },
+    270: { y: state.worldHeight * 0.2, mirror: false },
+    275: { y: state.worldHeight * 0.2, mirror: false },
     280: { y: state.worldHeight * 0.5, mirror: true },
     287: { y: state.worldHeight * 0.1, mirror: false, action: "goup" },
-    294: { block: true },
+    294: { y: state.worldHeight * 0.9, mirror: false, action: "godown" },
     //// final part
     308: { window: true },
+    314: {
+      y: state.worldHeight * 0.65,
+      blockUpper: true,
+      inverseNear: true,
+      playerCondition: (player) => {
+        return (
+          player.getBottomY() > state.worldHeight * 0.4 &&
+          player.getBottomY() < state.worldHeight * 0.6
+        );
+      },
+      stock: true,
+    },
+    318: {
+      y: state.worldHeight * 0.65,
+      blockUpper: true,
+      inverseNear: true,
+      playerCondition: (player) => {
+        return (
+          player.getBottomY() > state.worldHeight * 0.4 &&
+          player.getBottomY() < state.worldHeight * 0.6
+        );
+      },
+      stock: true,
+    },
     322: { y: state.worldHeight * 0.4, mirror: false },
     336: { y: state.worldHeight * 0.6, mirror: true },
     343: {
@@ -714,7 +820,7 @@ function OnStocksReady(state, stocks) {
 
   // Don't look up
   state.createBgBox(
-    state.worldWidth - 1940,
+    state.worldWidth - 1943,
     state.worldHeight * 0.425,
     1500,
     state.worldHeight * 0.2,
@@ -722,7 +828,7 @@ function OnStocksReady(state, stocks) {
     {
       text: {
         text: "Don't look up!",
-        fontSize: 140,
+        fontSize: 125,
         fontFamily: "Slackey-Regular",
         color: "#ffcf8780",
       },
