@@ -141,7 +141,7 @@ class Physics {
           this.state.physicsStats.gameStatus.winner = true;
         }
         if (elapsedTime > 0) this.state.gameTime += elapsedTime;
-        //this.moveFire(player, elapsedTime);
+        this.moveFire(player, elapsedTime);
       }
       /*console.log(
         "Compute state took:",
