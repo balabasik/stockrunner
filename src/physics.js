@@ -64,7 +64,7 @@ class Physics {
     this.onNewState(this.state);
     let newUpdateTime = GetTime();
     if (this.lastUpdateTime == 0) this.lastUpdateTime = newUpdateTime;
-    let baseDelay = 25;
+    let baseDelay = 35;
     let delay = Math.max(0, baseDelay - (newUpdateTime - this.lastUpdateTime));
     /*let delay = Math.min(
       baseDelay,
@@ -112,6 +112,19 @@ class Physics {
     //this.myGameTime = now - this.realInitTime;
     let newTimeStamp = now;
     let elapsedTime = now - this.state.timeStamp;
+
+    /*if (this.aveUpdateCnt == undefined) {
+      this.aveUpdateCnt = 1;
+      this.aveStart = GetTime();
+    } else this.aveUpdateCnt++;
+    if (this.aveUpdateCnt % 100 == 1) {
+      let now = GetTime();
+      this.aveElapsedTime = GetTime();
+
+      console.log("Ave physics:", (now - this.aveStart) / 100);
+      this.aveStart = now;
+      this.aveUpdateCnt = 1;
+    }*/
 
     //console.log(this.state.physicsStats.gameStatus.paused);
 
@@ -317,7 +330,7 @@ class Physics {
   moveFire(player, elapsedTime) {
     // If player is 10% away from fire then fire moves 2x faster.
     let mult =
-      0.6 *
+      0.5 *
       Math.max(
         1,
         ((this.state.player.getLeftX() - this.state.firePosX) /

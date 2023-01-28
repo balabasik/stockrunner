@@ -303,7 +303,10 @@ class GamePlay extends Component {
     let shiftX = moveX - this.state.worldLeftX;
     let shiftY = moveY - this.state.worldBottomY;
 
-    this.setState({ worldLeftX: moveX, worldBottomY: moveY });
+    // NOTE: We do not call setstate here but wait till state is set after whole physics update
+    this.state.worldLeftX = moveX;
+    this.state.worldBottomY = moveY;
+    //this.setState({ worldLeftX: moveX, worldBottomY: moveY });
     return { x: shiftX, y: shiftY };
   }
 
@@ -351,9 +354,10 @@ class GamePlay extends Component {
 
   updateState(state) {
     if (state.player != undefined) {
-      this.setState({
+      this.state.isDead = state.player.stats.isDead;
+      /*this.setState({
         isDead: state.player.stats.isDead,
-      });
+      });*/
     }
     if (state.physicsStats.gameStatus.paused) {
       this.state.gameState = state;
@@ -413,7 +417,8 @@ class GamePlay extends Component {
       for (let key in this.avatars) {
         this.avatars[key].sprite.update(50);
       }
-      this.setState({});
+      // NOTE: We do not update state here as state will be updated by physics callback
+      //this.setState({});
     }
     setTimeout(this.updateMenuPlayers.bind(this), 40);
   }
@@ -1105,7 +1110,29 @@ class GamePlay extends Component {
     );
   }
 
+  /*componentWillReceiveProps(props) {
+    this.newPropsCnt++;
+  }*/
+
   render() {
+    /*if (this.renderCnt == undefined) {
+      this.start = GetTime();
+      this.renderCnt = 1;
+      this.newPropsCnt = 0;
+    }
+    this.renderCnt += 1;
+    if (this.renderCnt % 100 == 1) {
+      let now = GetTime();
+      console.log(
+        "PLAY Render 100 delay:",
+        (now - this.start) / 100,
+        "Props updates:",
+        this.newPropsCnt
+      );
+      this.renderCnt = 1;
+      this.newPropsCnt = 0;
+      this.start = now;
+    }*/
     return (
       <div
         ref={(node) => {

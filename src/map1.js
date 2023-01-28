@@ -378,8 +378,8 @@ function LoadMap1(state) {
   });
 
   // 160 is player width
-  state.playerBirthPlaces = [[brickW * 356, state.worldHeight * 0.6]];
-  //state.playerBirthPlaces = [[brickW / 2 - 160 / 2, state.worldHeight * 0.8]];
+  //state.playerBirthPlaces = [[brickW * 356, state.worldHeight * 0.6]];
+  state.playerBirthPlaces = [[brickW / 2 - 160 / 2, state.worldHeight * 0.8]];
   LoadStocks((stocks) => {
     OnStocksReady(state, stocks);
   });

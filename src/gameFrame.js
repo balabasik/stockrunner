@@ -431,12 +431,33 @@ class GameWorld extends Component {
 class GameFrame extends Component {
   constructor(props) {
     super(props);
+    this.start = GetTime();
+    this.renderCnt = 1;
+    this.newPropsCnt = 0;
   }
 
+  /*componentWillReceiveProps(props) {
+    this.newPropsCnt++;
+    //console.log(this.newPropsCnt);
+  }*/
+
   render() {
+    /*this.renderCnt += 1;
+    if (this.renderCnt % 100 == 1) {
+      let now = GetTime();
+      console.log(
+        "Render 100 delay:",
+        (now - this.start) / 100,
+        "Props updates:",
+        this.newPropsCnt
+      );
+      this.renderCnt = 1;
+      this.newPropsCnt = 0;
+      this.start = now;
+    }*/
     return (
       <div>
-        <Wall gameState={this.props.gameState} />
+        {<Wall gameState={this.props.gameState} />}
         <GameWorld
           gameState={this.props.gameState}
           worldLeftX={this.props.worldLeftX}
