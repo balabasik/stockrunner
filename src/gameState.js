@@ -2,6 +2,7 @@ import Box from "./box";
 import Geometry from "./geometry";
 import { Linear } from "./box";
 import LoadMap1 from "./map1";
+import { GetTime } from "./utils";
 
 const defaultBoxStyle = { backgroundColor: "blue" };
 
@@ -50,7 +51,7 @@ class GameState {
   // Timestamp is needed to compute positions of dynamic elements
   constructor(physics) {
     this.physics = physics;
-    this.timeStamp = 0;
+    this.timeStamp = GetTime();
     this.gameTime = 0;
     this.player = null;
     this.playerKeys = null;
@@ -72,7 +73,7 @@ class GameState {
   }
 
   resetFirePosX() {
-    this.firePosX = -200;
+    this.firePosX = -500;
   }
 
   resetPhysicsStats() {

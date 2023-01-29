@@ -711,7 +711,7 @@ class GameUi extends Component {
     let progress = this.props.gameState
       ? this.props.gameState.player.stats.bitcoins
       : 0;
-    let seconds = this.props.gameState ? this.props.gameState.timeStamp : 0;
+    let seconds = this.props.gameState ? this.props.gameState.gameTime : 0;
     let mm = Math.floor(seconds / 60 / 1000) % 100;
     if (mm < 10) mm = "0" + mm;
     let ss = Math.floor(seconds / 1000) % 60;

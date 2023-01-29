@@ -216,7 +216,7 @@ class Winner extends Component {
         src="stars.png"
       />
     );
-    let seconds = this.props.timeStamp;
+    let seconds = this.props.gameTime;
     let mm = Math.floor(seconds / 60 / 1000) % 100;
     if (mm < 10) mm = "0" + mm;
     let ss = Math.floor(seconds / 1000) % 60;

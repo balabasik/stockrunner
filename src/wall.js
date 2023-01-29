@@ -83,7 +83,8 @@ class Wall extends Component {
       ];
     }
     //console.log(this.state.shinyPoint);
-    this.setState({});
+    // NOTE: We don't set state since render will be called by the new physics state.
+    //this.setState({});
   }
 
   periodicMovePoints() {
@@ -120,19 +121,30 @@ class Wall extends Component {
           width: 8640, //"100%",
           height: 1300, //"100%",
           backgroundColor: "#2a2723",
-          filter: "blur(5px)",
+          //filter: "blur(5px)",
         }}
       >
-        <object
-          data="zigzag.svg" // NOTE: in illustrator use "export_as", and "use artboards"
-          type="image/svg+xml"
-          id="zigzag-svg"
-          width="100%"
-          height="100%"
-          left="0px"
-          top="0px"
-          onLoad={this.onSvgLoaded.bind(this)}
-        />
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            width: "100%",
+            height: "100%",
+            filter: "blur(5px)",
+          }}
+        >
+          <object
+            data="zigzag.svg" // NOTE: in illustrator use "export_as", and "use artboards"
+            type="image/svg+xml"
+            id="zigzag-svg"
+            width="100%"
+            height="100%"
+            left="0px"
+            top="0px"
+            onLoad={this.onSvgLoaded.bind(this)}
+          />
+        </div>
         {this.state.shinyPoints.map((point, id) => {
           let visible = point.pos[0] >= -left && point.pos[0] < -left + fw;
           if (!visible) return;
@@ -141,11 +153,11 @@ class Wall extends Component {
               key={id}
               style={{
                 position: "absolute",
-                left: point.pos[0] - 10 / 2,
-                top: point.pos[1] - 10 / 2,
-                width: 10,
-                height: 10,
-                borderRadius: 10,
+                left: point.pos[0] - 8 / 2,
+                top: point.pos[1] - 8 / 2,
+                width: 8,
+                height: 8,
+                borderRadius: 8,
                 boxShadow: "0px 0px 10px 10px #ffffff",
                 backgroundColor: "#ffffff",
               }}
