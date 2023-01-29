@@ -131,7 +131,7 @@ class Wall extends Component {
             top: 0,
             width: "100%",
             height: "100%",
-            filter: "blur(5px)",
+            opacity: 0,
           }}
         >
           <object
@@ -145,6 +145,13 @@ class Wall extends Component {
             onLoad={this.onSvgLoaded.bind(this)}
           />
         </div>
+        <img
+          src="zigzag_blur.png"
+          width="100%"
+          height="100%"
+          left="0px"
+          top="0px"
+        />
         {this.state.shinyPoints.map((point, id) => {
           let visible = point.pos[0] >= -left && point.pos[0] < -left + fw;
           if (!visible) return;
