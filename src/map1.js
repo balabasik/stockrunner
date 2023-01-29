@@ -379,7 +379,7 @@ function LoadMap1(state) {
   });
 
   // 160 is player width
-  //state.playerBirthPlaces = [[brickW * 356, state.worldHeight * 0.6]];
+  //state.playerBirthPlaces = [[brickW * 362, state.worldHeight * 0.6]];
   state.playerBirthPlaces = [[brickW / 2 - 160 / 2, state.worldHeight * 0.8]];
   LoadStocks((stocks) => {
     OnStocksReady(state, stocks);
@@ -821,15 +821,15 @@ function OnStocksReady(state, stocks) {
 
   // Don't look up
   state.createBgBox(
-    state.worldWidth - 1943,
+    state.worldWidth - 1650,
     state.worldHeight * 0.425,
-    1500,
+    900,
     state.worldHeight * 0.2,
     {},
     {
       text: {
-        text: "Don't look up!",
-        fontSize: 125,
+        text: "Your hard work opens the gate for new opportunities!",
+        fontSize: 75,
         fontFamily: "Slackey-Regular",
         color: "#ffcf8780",
       },

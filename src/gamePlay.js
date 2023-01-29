@@ -38,6 +38,77 @@ const globalHolderStyle = {
   overflow: "hidden",
 };
 
+const resources = [
+  "block_short.png",
+  "block.png",
+  "perk_bitcoin.png",
+  "pipe.png",
+  "ramona_sprite.png",
+  "scott_sprite.png",
+  "slider.png",
+  "wall.png",
+  "window.png",
+];
+
+const fonts = [
+  "Acme-Regular",
+  "Audiowide-Regular",
+  "DenkOne-Regular",
+  "Iceland-Regular",
+  "JotiOne-Regular",
+  "PasseroOne-Regular",
+  "PrStart",
+  "Slackey-Regular",
+];
+
+const prerender = (
+  <div
+    style={{
+      position: "absolute",
+      left: 0, //-500,
+      top: 0, //-500,
+      width: 400,
+      height: 400,
+      overflow: "hidden",
+    }}
+  >
+    {resources.map((src) => {
+      return (
+        <img
+          src={src}
+          style={{
+            position: "absolute",
+            left: 0,
+            bottom: 0,
+            width: 100,
+            height: 100,
+          }}
+        />
+      );
+    })}
+    {fonts.map((src) => {
+      return (
+        <div
+          style={{
+            position: "absolute",
+            left: 140,
+            top: 80,
+            width: 120,
+            height: 120,
+            fontSize: 60,
+            fontFamily: src,
+            display: "flex",
+            alignItems: "center",
+            //justifyContent: "center",
+          }}
+        >
+          {"hello"}
+        </div>
+      );
+    })}
+  </div>
+);
+
 const defaultScale = 0.3;
 const extraScale = 1.4;
 
@@ -1145,6 +1216,7 @@ class GamePlay extends Component {
         onClick={(event) => this.onClick(event)}
         onContextMenu={(event) => this.onContextMenu(event)}
       >
+        {prerender}
         <div
           style={{
             position: "absolute",
